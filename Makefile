@@ -6,15 +6,12 @@ BUILD_DIR=build
 # Stack Calculator specific
 CALC_SRC_DIR=$(SRC_DIR)/stack_calculator
 CALC_SRCS=$(wildcard $(CALC_SRC_DIR)/*.c)
-CALC_OBJS=$(CALC_SRCS:$(CALC_SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+# Fix: Change the object path to include stack_calculator subdirectory
+CALC_OBJS=$(CALC_SRCS:$(SRC_DIR)/stack_calculator/%.c=$(BUILD_DIR)/stack_calculator/%.o)
 CALC_TARGET=$(BUILD_DIR)/calculator
 
-# Other single-file programs
-SINGLE_SRCS=$(filter-out $(CALC_SRCS), $(wildcard $(SRC_DIR)/*.c))
-SINGLE_EXES=$(SINGLE_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%)
-
-# Create build directory
-$(shell mkdir -p $(BUILD_DIR))
+# Create build directories
+$(shell mkdir -p $(BUILD_DIR)/stack_calculator)
 
 all: $(SINGLE_EXES) calculator
 
@@ -25,7 +22,8 @@ singles: $(SINGLE_EXES)
 $(CALC_TARGET): $(CALC_OBJS)
 	$(CC) $(CFLAGS) $(CALC_OBJS) -o $@
 
-$(BUILD_DIR)/%.o: $(CALC_SRC_DIR)/%.c
+# Fix: Update the object file path pattern
+$(BUILD_DIR)/stack_calculator/%.o: $(CALC_SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Direct compilation for single-file programs

@@ -1,74 +1,131 @@
 #include "stack_calculator.h"
 
+#include <assert.h>
+#include <math.h>
 #include <stdlib.h>
 
-void stack_init(Stack* stack) {
-  stack->top      = 0;
-  stack->values   = (double*)malloc(sizeof(double) * STACK_MAX_SIZE);
-  stack->capacity = STACK_MAX_SIZE;
-}
-
-void stack_free(Stack* stack) {
-  free(stack->values);
-  stack->values   = NULL;
-  stack->top      = 0;
-  stack->capacity = 0;
-}
-
-StackError stack_push(Stack* stack, double value) {
-  // first check if the stack is full
-  if (stack->top == stack->capacity) {
-    // if it is, grow the stack
-    size_t  new_capacity = stack->capacity *= 2;
-    double* new_values   = realloc(stack->values, new_capacity);
-
-    // if memory allocation failed
-    if (new_values == NULL) {
-      return STACK_OVERFLOW;
-    }
-
-    stack->capacity = new_capacity;
-    stack->values   = new_values;
-    stack->top++;
-  }
-
-  // else, just add the value to the stack
-  stack->values[stack->top] = value;
-  stack->top++;
-  return STACK_OK;
-}
-
-StackError stack_pop(Stack* stack, double* value) {
-  // check if the stack is below zero
-  if (stack->top == 0) {
+StackError calc_add(Stack* stack) {
+  if (stack->top < 2) {
     return STACK_UNDERFLOW;
   }
 
-  // set the new top to top - 1. (remember top is an empty spot)
-  stack->top--;
+  double     add1, add2;
+  StackError r1, r2;
 
-  // take the top value off the stack and put it in the value
-  *value = stack->values[stack->top];
+  r1 = stack_pop(stack, &add1);
+  r2 = stack_pop(stack, &add2);
 
-  return STACK_OK;
+  assert(r1 == STACK_OK &&
+         "calc_add -- Stack memory error. Processing r1 from stack_pop.");
+  assert(r2 == STACK_OK &&
+         "calc_add -- Stack memory error. Processing r2 from stack_pop.");
+
+  return stack_push(stack, add1 + add2);
 }
 
-/**
- * ## Function: stack_peek
- *
- * @brief Similar to pop() -- it looks at the top value of the stack, but does
- * not remove the value.
- */
-StackError stack_peek(const Stack* stack, double* result) {
-  if (result == NULL || stack == NULL) {
-    return STACK_NULL_POINTER;
-  }
-
-  if (stack->top == 0) {
+StackError calc_subtract(Stack* stack) {
+  if (stack->top < 2) {
     return STACK_UNDERFLOW;
   }
 
-  *result = stack->values[stack->top - 1];
+  double     base, subtractor;
+  StackError r1, r2;
 
-  return STACK_OK;
+  r1 = stack_pop(stack, &subtractor);
+  r2 = stack_pop(stack, &base);
+
+  assert(r1 == STACK_OK &&
+         "calc_subtract -- Stack memory error. Processing r1 - subtractor from "
+         "stack_pop.");
+  assert(r2 == STACK_OK &&
+         "calc_subtract -- Stack memory error. Processing r2 - base from "
+         "stack_pop.");
+
+  return stack_push(stack, base - subtractor);
+}
+
+StackError calc_multiply(Stack* stack) {
+  if (stack->top < 2) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     multiplier1, multiplier2;
+  StackError r1, r2;
+
+  r1 = stack_pop(stack, &multiplier1);
+  r2 = stack_pop(stack, &multiplier2);
+
+  assert(r1 == STACK_OK &&
+         "calc_multiply -- Stack memory error. Processing r1 - multiplier1 "
+         "from stack_pop.");
+  assert(r2 == STACK_OK &&
+         "calc_multiply -- Stack memory error. Processing r2 - multiplier2 "
+         "from stack_pop.");
+
+  return stack_push(stack, multiplier1 * multiplier2);
+}
+
+StackError calc_divide(Stack* stack) {
+  if (stack->top < 2) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     divisor, base;
+  StackError r1, r2;
+
+  r1 = stack_pop(stack, &divisor);
+  r2 = stack_pop(stack, &base);
+
+  assert(r1 == STACK_OK &&
+         "calc_divide -- Stack memory error. Processing r1 from stack_pop.");
+  assert(r2 == STACK_OK &&
+         "calc_divide -- Stack memory error. Processing r2 from stack_pop.");
+
+  if (divisor == 0) {
+    return STACK_DIVISION_BY_ZERO;
+  }
+
+  return stack_push(stack, base / divisor);
+}
+
+StackError calc_square_root(Stack* stack) {
+  if (stack->top < 1) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     n1;
+  StackError r1;
+
+  r1 = stack_pop(stack, &n1);
+
+  assert(
+      r1 == STACK_OK &&
+      "calc_square_root -- Stack memory error. Processing r1 from stack_pop.");
+
+  if (n1 < 0) {
+    return STACK_NAN;
+  }
+
+  return stack_push(stack, sqrt(n1));
+}
+
+StackError calc_power(Stack* stack) {
+  if (stack->top < 2) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     exponent, base;
+  StackError r1, r2;
+
+  r1 = stack_pop(stack, &exponent);
+  r2 = stack_pop(stack, &base);
+
+  assert(r1 == STACK_OK &&
+         "calc_power -- Stack memory error. Processing r1 exponent from "
+         "stack_pop.");
+  assert(
+      r2 == STACK_OK &&
+      "calc_power -- Stack memory error. Processing r2 base from stack_pop.");
+
+  return stack_push(stack, pow(base, exponent));
 }
