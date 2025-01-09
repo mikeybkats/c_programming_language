@@ -21,7 +21,6 @@ void test_stack_init(void) {
 
 void test_stack_free(void) {
   stack_free(&stack);
-  // Test that values are nulled out and counters reset
   TEST_ASSERT_NULL(stack.values);
   TEST_ASSERT_EQUAL_size_t(0, stack.top);
   TEST_ASSERT_EQUAL_size_t(0, stack.capacity);
