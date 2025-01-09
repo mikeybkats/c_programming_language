@@ -6,4 +6,7 @@
 build/*
 **/target/**
 
+
+#tests
 test_calculator
+tests/*.o
