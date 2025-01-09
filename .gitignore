@@ -5,3 +5,5 @@
 **/build/**
 build/*
 **/target/**
+
+test_calculator
