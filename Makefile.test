@@ -6,22 +6,28 @@ CFLAGS = -Wall -Werror -g
 SRC_DIR = src/stack_calculator
 TEST_DIR = tests
 UNITY_DIR = unity
+BUILD_DIR = build/test
 
 # Source files using wildcards
 SRC = $(filter-out $(SRC_DIR)/main.c, $(wildcard $(SRC_DIR)/*.c))
 TEST_SRC = $(wildcard $(TEST_DIR)/test_*.c)
 UNITY_SRC = $(UNITY_DIR)/unity.c
 
-# Object files
-OBJ = $(SRC:.c=.o)
-TEST_OBJ = $(TEST_SRC:.c=.o)
-UNITY_OBJ = $(UNITY_SRC:.c=.o)
+# Object files - put them all in BUILD_DIR
+OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
+TEST_OBJ = $(TEST_SRC:%.c=$(BUILD_DIR)/%.o)
+UNITY_OBJ = $(UNITY_SRC:%.c=$(BUILD_DIR)/%.o)
 
 # Output executable
-TEST_EXEC = test_calculator
+TEST_EXEC = $(BUILD_DIR)/test_calculator
 
 # Include paths
 INCLUDES = -I$(SRC_DIR) -I$(UNITY_DIR)
+
+# Create necessary build directories
+$(shell mkdir -p $(BUILD_DIR)/src/stack_calculator)
+$(shell mkdir -p $(BUILD_DIR)/tests)
+$(shell mkdir -p $(BUILD_DIR)/unity)
 
 # Test target
 test: $(TEST_EXEC)
@@ -30,10 +36,11 @@ test: $(TEST_EXEC)
 $(TEST_EXEC): $(OBJ) $(TEST_OBJ) $(UNITY_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c
+# Pattern rules for object files
+$(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f $(TEST_EXEC) $(OBJ) $(TEST_OBJ) $(UNITY_OBJ)
+	rm -rf $(BUILD_DIR)
 
 .PHONY: test clean

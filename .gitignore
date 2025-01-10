@@ -6,6 +6,8 @@
 build/*
 **/target/**
 
+#src build
+src/**/*.o
 
 #tests
 test_calculator
