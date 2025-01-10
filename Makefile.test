@@ -7,9 +7,9 @@ SRC_DIR = src/stack_calculator
 TEST_DIR = tests
 UNITY_DIR = unity
 
-# Source files (only the ones we need)
-SRC = $(SRC_DIR)/stack_calculator.c
-TEST_SRC = $(TEST_DIR)/test_stack_calculator.c $(TEST_DIR)/test_main.c
+# Source files using wildcards
+SRC = $(filter-out $(SRC_DIR)/main.c, $(wildcard $(SRC_DIR)/*.c))
+TEST_SRC = $(wildcard $(TEST_DIR)/test_*.c)
 UNITY_SRC = $(UNITY_DIR)/unity.c
 
 # Object files

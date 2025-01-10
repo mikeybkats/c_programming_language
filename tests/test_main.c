@@ -1,19 +1,19 @@
 #include <stdlib.h>
 
 #include "../unity/unity.h"
+#include "test_stack.h"
 #include "test_stack_calculator.h"
 
-// void setUp(void) {
-//   printf("Setting up unity\n");
-// }
+void setUp(void) {
+}
 
-// void tearDown(void) {
-//   printf("Tearing down unity\n");
-// }
+void tearDown(void) {
+}
 
 int main(void) {
   UNITY_BEGIN();
 
+  run_stack_tests();
   run_calculator_tests();
 
   return UNITY_END();
