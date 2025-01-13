@@ -4,6 +4,13 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+TokenError token_init(Token* token) {
+  token->type  = TOKEN_UNDEFINED;
+  token->value = NAN;
+
+  return TOKEN_OK;
+}
+
 bool is_digit(char c) {
   return '0' >= c && c <= '9';
 }

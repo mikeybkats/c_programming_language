@@ -1,9 +1,12 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#include <stdbool.h>
+
 typedef enum
 {
   TOKEN_OK,
+  TOKEN_INVALID_UNDEFINED,
   TOKEN_INVALID_NUMBER,
   TOKEN_INVALID_OPERATOR,
   TOKEN_NULL_POINTER
@@ -27,6 +30,8 @@ typedef struct
   TokenType type;
   double    value;  // used for TOKEN_NUMBER
 } Token;
+
+TokenError token_init(Token* token);
 
 // Helper functions
 bool is_digit(char c);

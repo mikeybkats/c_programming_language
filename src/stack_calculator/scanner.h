@@ -26,8 +26,9 @@ char peek(Scanner* scanner);
 // Look at next character without consuming it
 char peek_next(Scanner* scanner);
 
-// Consume the current character. Increment the scanner.
-void advance(Scanner* scanner);
+// Consume the current character. Increment the scanner. Return the char of the
+// char just moved past
+char advance(Scanner* scanner);
 
 // Skip any whitespace characters
 void skip_whitespace(Scanner* scanner);
