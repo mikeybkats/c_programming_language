@@ -2,26 +2,54 @@
 
 #include "../unity/unity.h"
 
+#define SCANNER_INIT_SOURCE "123 + 111\0"
+
 Scanner scanner;
 Token   token;
 
 void setUp_scanner() {
-  scanner_init(&scanner, "123 + 111");
+  scanner_init(&scanner, SCANNER_INIT_SOURCE);
   token_init(&token);
 }
 
 void tearDown_scanner() {
 }
 
+void test_is_at_end(void) {
+  bool isEnd = is_at_end(&scanner);
+
+  TEST_ASSERT_FALSE(isEnd);
+
+  scanner.position = 9;
+  isEnd            = is_at_end(&scanner);
+  TEST_ASSERT_TRUE(isEnd);
+}
+
+void test_peek(void) {
+}
+void test_peek_next(void) {
+}
+void test_advance(void) {
+}
+
+void test_skip_whitespace(void) {
+  scanner.source   = "   1 + 5";
+  scanner.position = 0;
+  skip_whitespace(&scanner);
+
+  TEST_ASSERT_EQUAL_size_t(3, scanner.position);
+
+  scanner_init(&scanner, SCANNER_INIT_SOURCE);
+}
+
+void test_match(void) {
+}
+
 void test_scan_token(void) {
-  printf("scanner source: %s\n", scanner.source);
-  printf("scanner position: %zu\n", scanner.position);
-  printf("scanner start: %zu\n", scanner.start);
-
-  printf("token type: %u\n", token.type);
-  printf("token value: %f\n", token.value);
-
   scan_token(&scanner, &token);
+
+  printf("\nTEST: token type: %u\n", token.type);
+  printf("TEST: token value: %f\n", token.value);
 
   TEST_FAIL();
 }
@@ -33,6 +61,8 @@ void run_scanner_tests(void) {
   printf("Scanner Tests");
   printf("\n-------------\n");
 
+  RUN_TEST(test_is_at_end);
+  RUN_TEST(test_skip_whitespace);
   RUN_TEST(test_scan_token);
 
   tearDown_scanner();
