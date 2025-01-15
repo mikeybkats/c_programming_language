@@ -1,6 +1,10 @@
 # Compiler settings
 CC = gcc
 CFLAGS = -Wall -Werror -g
+CPPFLAGS = -DUNITY_INCLUDE_DOUBLE -DUNITY_INCLUDE_FLOAT
+
+# Create separate flags for Unity compilation
+UNITY_CFLAGS = -Wall -Werror -g -DUNITY_INCLUDE_DOUBLE -DUNITY_INCLUDE_FLOAT
 
 # Directories
 SRC_DIR = src/stack_calculator
@@ -33,12 +37,17 @@ $(shell mkdir -p $(BUILD_DIR)/unity)
 test: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
+# Special rule for Unity compilation
+$(BUILD_DIR)/unity.o: $(UNITY_DIR)/unity.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 $(TEST_EXEC): $(OBJ) $(TEST_OBJ) $(UNITY_OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $^
 
 # Pattern rules for object files
 $(BUILD_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -rf $(BUILD_DIR)

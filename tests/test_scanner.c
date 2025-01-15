@@ -51,7 +51,8 @@ void test_scan_token(void) {
   printf("\nTEST: token type: %u\n", token.type);
   printf("TEST: token value: %f\n", token.value);
 
-  TEST_FAIL();
+  TEST_ASSERT_EQUAL_INT(TOKEN_NUMBER, token.type);
+  TEST_ASSERT_DOUBLE_WITHIN(0.01, 123.0, token.value);
 }
 
 void run_scanner_tests(void) {
