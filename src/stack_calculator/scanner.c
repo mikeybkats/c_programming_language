@@ -92,7 +92,6 @@ TokenError scan_token(Scanner* scanner, Token* token) {
     int  count = 0;
 
     while (is_digit(current)) {
-      printf("looping\n");
       if (count > MAX_NUMBER_LENGTH) {
         return TOKEN_INVALID_NUMBER;
       }
@@ -100,8 +99,6 @@ TokenError scan_token(Scanner* scanner, Token* token) {
       string_number[count] = advance(scanner);
       current              = string_number[count];
 
-      // printf("IS DIGIT: %s\n", is_digit(current) ? "TRUE" : "FALSE");
-      // printf("STRING NUMBER: %c\n", string_number[count]);
       count++;
     }
 

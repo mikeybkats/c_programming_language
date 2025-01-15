@@ -48,11 +48,13 @@ void test_match(void) {
 void test_scan_token(void) {
   scan_token(&scanner, &token);
 
-  printf("\nTEST: token type: %u\n", token.type);
-  printf("TEST: token value: %f\n", token.value);
-
   TEST_ASSERT_EQUAL_INT(TOKEN_NUMBER, token.type);
   TEST_ASSERT_DOUBLE_WITHIN(0.01, 123.0, token.value);
+
+  token_init(&token);
+  scan_token(&scanner, &token);
+
+  TEST_ASSERT_EQUAL_INT(TOKEN_PLUS, token.type);
 }
 
 void run_scanner_tests(void) {

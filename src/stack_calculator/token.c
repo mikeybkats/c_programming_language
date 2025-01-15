@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 TokenError token_init(Token* token) {
@@ -40,7 +41,7 @@ TokenError make_number(double value, Token* token) {
 }
 
 TokenError make_operator(char op, Token* token) {
-  if (token != NULL) {
+  if (token == NULL) {
     return TOKEN_NULL_POINTER;
   }
 
