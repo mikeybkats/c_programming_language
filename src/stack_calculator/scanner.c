@@ -81,7 +81,7 @@ bool match(Scanner* scanner, char expected) {
 
 TokenError scan_token(Scanner* scanner, Token* token) {
   // skip whitespace
-  skip_whitespace(scanner);
+  // skip_whitespace(scanner);
 
   // // get current character
   char current = peek(scanner);
@@ -96,8 +96,8 @@ TokenError scan_token(Scanner* scanner, Token* token) {
         return TOKEN_INVALID_NUMBER;
       }
 
-      string_number[count] = advance(scanner);
-      current              = string_number[count];
+      string_number[count] = advance(scanner);  // returns char just consumed
+      current              = peek(scanner);     // returns new current char
 
       count++;
     }
@@ -110,4 +110,32 @@ TokenError scan_token(Scanner* scanner, Token* token) {
   }
 
   return TOKEN_INVALID_UNDEFINED;
+}
+
+void scan_line(Scanner* scanner, Stack* stack) {
+  // while current char != EOF
+  while (!is_at_end(scanner)) {
+    skip_whitespace(scanner);
+
+    Token token;
+    token_init(&token);
+
+    TokenError err_t = scan_token(scanner, &token);
+
+    if (err_t != TOKEN_OK) {
+      // handle error
+      printf("TOKEN_ERROR -- error type: %d\n", err_t);
+    }
+
+    StackError err_s = evaluate_token(&token, stack);
+
+    if (err_s != STACK_OK) {
+      // handle error
+      printf("STACK_ERROR -- error type: %d\n", err_s);
+    }
+  }
+
+  double r;
+  stack_peek(stack, &r);
+  printf("STACK RESULT -- %f\n", r);
 }

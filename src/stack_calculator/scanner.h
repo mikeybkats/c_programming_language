@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "stack.h"
 #include "token.h"
 
 typedef struct
@@ -44,5 +45,7 @@ bool match(Scanner* scanner, char expected);
 // If it's an operator: create an operator token
 // If it's end of input: create EOF token
 TokenError scan_token(Scanner* scanner, Token* token);
+
+void scan_line(Scanner* scanner, Stack* stack);
 
 #endif  // SCANNER_H

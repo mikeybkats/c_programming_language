@@ -10,6 +10,7 @@ void test_advance(void);
 void test_skip_whitespace(void);
 void test_match(void);
 void test_scan_token(void);
+void test_scan_line(void);
 void run_scanner_tests(void);
 
 #endif

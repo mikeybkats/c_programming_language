@@ -2,7 +2,7 @@
 
 #include "../unity/unity.h"
 
-#define SCANNER_INIT_SOURCE "123 + 111\0"
+#define SCANNER_INIT_SOURCE "123 111 +\0"
 
 Scanner scanner;
 Token   token;
@@ -46,15 +46,25 @@ void test_match(void) {
 }
 
 void test_scan_token(void) {
+  skip_whitespace(&scanner);
   scan_token(&scanner, &token);
 
   TEST_ASSERT_EQUAL_INT(TOKEN_NUMBER, token.type);
   TEST_ASSERT_DOUBLE_WITHIN(0.01, 123.0, token.value);
 
   token_init(&token);
+  skip_whitespace(&scanner);
+  scan_token(&scanner, &token);
+
+  TEST_ASSERT_EQUAL_INT(TOKEN_NUMBER, token.type);
+
+  skip_whitespace(&scanner);
   scan_token(&scanner, &token);
 
   TEST_ASSERT_EQUAL_INT(TOKEN_PLUS, token.type);
+}
+
+void test_scan_line(void) {
 }
 
 void run_scanner_tests(void) {

@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "stack.h"
+
 typedef enum
 {
   TOKEN_OK,
@@ -14,13 +16,13 @@ typedef enum
 
 typedef enum
 {
-  TOKEN_NUMBER,    // 123, 45.67
   TOKEN_PLUS,      // +
   TOKEN_MINUS,     // -
   TOKEN_MULTIPLY,  // *
   TOKEN_DIVIDE,    // /
   TOKEN_POWER,     // ^
   TOKEN_SQRT,      // s
+  TOKEN_NUMBER,    // 123, 45.67
   TOKEN_EOF,       // end of input
   TOKEN_UNDEFINED
 } TokenType;
@@ -42,5 +44,7 @@ bool is_operator(char c);
 TokenError make_number(double value, Token* token);
 TokenError make_operator(char op, Token* token);
 TokenError make_eof(Token* token);
+
+StackError evaluate_token(Token* token, Stack* stack);
 
 #endif  // TOKEN_H

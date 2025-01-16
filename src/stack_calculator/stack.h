@@ -16,7 +16,8 @@ typedef enum
   STACK_UNDERFLOW,
   STACK_DIVISION_BY_ZERO,
   STACK_NULL_POINTER,
-  STACK_NAN
+  STACK_NAN,
+  STACK_EVAL_ERROR
 } StackError;
 
 // Stack structure
