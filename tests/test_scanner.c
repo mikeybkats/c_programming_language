@@ -65,6 +65,12 @@ void test_scan_token(void) {
 }
 
 void test_scan_line(void) {
+  scanner_init(&scanner, SCANNER_INIT_SOURCE);
+  Stack stack;
+  stack_init(&stack);
+  scan_line(&scanner, &stack);
+
+  TEST_FAIL();
 }
 
 void run_scanner_tests(void) {

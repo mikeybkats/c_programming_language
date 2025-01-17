@@ -112,7 +112,7 @@ TokenError scan_token(Scanner* scanner, Token* token) {
   return TOKEN_INVALID_UNDEFINED;
 }
 
-void scan_line(Scanner* scanner, Stack* stack) {
+CalculatorError scan_line(Scanner* scanner, Stack* stack) {
   // while current char != EOF
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
@@ -124,18 +124,24 @@ void scan_line(Scanner* scanner, Stack* stack) {
 
     if (err_t != TOKEN_OK) {
       // handle error
-      printf("TOKEN_ERROR -- error type: %d\n", err_t);
+      // printf("TOKEN_ERROR -- error type: %d\n", err_t);
+      return return_token_error(err_t);
     }
 
     StackError err_s = evaluate_token(&token, stack);
 
     if (err_s != STACK_OK) {
       // handle error
-      printf("STACK_ERROR -- error type: %d\n", err_s);
+      // printf("STACK_ERROR -- error type: %d\n", err_s);
+      return return_stack_error(err_s);
     }
   }
 
-  double r;
-  stack_peek(stack, &r);
-  printf("STACK RESULT -- %f\n", r);
+  // double r;
+  // stack_peek(stack, &r);
+  // printf("STACK RESULT -- %f\n", r);
+
+  CalculatorError err;
+  err.type = ERROR_NONE;
+  return err;
 }

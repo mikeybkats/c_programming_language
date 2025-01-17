@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "stack.h"
+#include "stack_calculator.h"
 #include "token.h"
 
 typedef struct
@@ -46,6 +47,6 @@ bool match(Scanner* scanner, char expected);
 // If it's end of input: create EOF token
 TokenError scan_token(Scanner* scanner, Token* token);
 
-void scan_line(Scanner* scanner, Stack* stack);
+CalculatorError scan_line(Scanner* scanner, Stack* stack);
 
 #endif  // SCANNER_H

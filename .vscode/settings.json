@@ -1,7 +1,10 @@
 {
   "eslint.enable": false,
   "files.associations": {
-    "Makefile.*": "makefile"
+    "Makefile.*": "makefile",
+    "stack.h": "c",
+    "token.h": "c",
+    "stack_calculator.h": "c"
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "xaver.clang-format",

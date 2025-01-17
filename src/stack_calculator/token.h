@@ -33,6 +33,8 @@ typedef struct
   double    value;  // used for TOKEN_NUMBER
 } Token;
 
+CalculatorError return_token_error(TokenError error);
+
 TokenError token_init(Token* token);
 
 // Helper functions

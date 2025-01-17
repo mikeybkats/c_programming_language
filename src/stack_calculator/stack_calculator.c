@@ -4,6 +4,14 @@
 #include <math.h>
 #include <stdlib.h>
 
+CalculatorError return_stack_error(StackError stack_error) {
+  CalculatorError error;
+  error.type              = ERROR_STACK;
+  error.error.stack_error = stack_error;
+
+  return error;
+}
+
 StackError calc_add(Stack* stack) {
   if (stack->top < 2) {
     return STACK_UNDERFLOW;
