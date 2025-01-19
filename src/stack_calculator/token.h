@@ -18,6 +18,12 @@ typedef enum
   TOKEN_UNDEFINED
 } TokenType;
 
+/**
+ * @brief Token structure
+ *
+ * @param type TokenType
+ * @param value double (used for TOKEN_NUMBER)
+ */
 typedef struct
 {
   TokenType type;

@@ -80,9 +80,6 @@ bool match(Scanner* scanner, char expected) {
 }
 
 TokenError scan_token(Scanner* scanner, Token* token) {
-  // skip whitespace
-  // skip_whitespace(scanner);
-
   // // get current character
   char current = peek(scanner);
 
@@ -113,7 +110,6 @@ TokenError scan_token(Scanner* scanner, Token* token) {
 }
 
 CalculatorError scan_line(Scanner* scanner, Stack* stack) {
-  // while current char != EOF
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
 

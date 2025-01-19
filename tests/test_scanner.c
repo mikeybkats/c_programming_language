@@ -102,6 +102,12 @@ void test_scan_line(void) {
   TEST_ASSERT_EQUAL(STACK_OK, peek_error);
   TEST_ASSERT_EQUAL_INT(4, result);
 
+  scanner_init(&scanner, "2 3 4 + *");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(14, result);
+
   TEST_ASSERT_EQUAL(ERROR_NONE, calc_error.type);
 
   stack_free(&stack);
