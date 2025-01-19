@@ -44,6 +44,7 @@ void test_stack_push(void) {
 }
 
 void test_stack_pop(void) {
+  // Verify initialization
   double v1, v2, v3;
 
   // first in last out
@@ -90,9 +91,9 @@ void run_stack_tests(void) {
   printf("\n-----------\n");
 
   RUN_TEST(test_stack_init);
-  RUN_TEST(test_stack_free);
   RUN_TEST(test_stack_push);
   RUN_TEST(test_stack_pop);
   RUN_TEST(test_stack_peek);
+  RUN_TEST(test_stack_free);
   tearDown_stack();
 }

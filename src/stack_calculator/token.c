@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "calculator_types.h"
 #include "stack_calculator.h"
 
 CalculatorError return_token_error(TokenError token_error) {

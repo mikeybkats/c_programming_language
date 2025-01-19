@@ -5,20 +5,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "calculator_types.h"
+
 // Maximum size of the stack
 #define STACK_MAX_SIZE 256
-
-// Error codes
-typedef enum
-{
-  STACK_OK,
-  STACK_OVERFLOW,
-  STACK_UNDERFLOW,
-  STACK_DIVISION_BY_ZERO,
-  STACK_NULL_POINTER,
-  STACK_NAN,
-  STACK_EVAL_ERROR
-} StackError;
 
 // Stack structure
 typedef struct

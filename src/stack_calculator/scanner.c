@@ -123,23 +123,15 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
     TokenError err_t = scan_token(scanner, &token);
 
     if (err_t != TOKEN_OK) {
-      // handle error
-      // printf("TOKEN_ERROR -- error type: %d\n", err_t);
       return return_token_error(err_t);
     }
 
     StackError err_s = evaluate_token(&token, stack);
 
     if (err_s != STACK_OK) {
-      // handle error
-      // printf("STACK_ERROR -- error type: %d\n", err_s);
       return return_stack_error(err_s);
     }
   }
-
-  // double r;
-  // stack_peek(stack, &r);
-  // printf("STACK RESULT -- %f\n", r);
 
   CalculatorError err;
   err.type = ERROR_NONE;

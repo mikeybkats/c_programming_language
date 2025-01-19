@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 CalculatorError return_stack_error(StackError stack_error) {
@@ -20,8 +21,8 @@ StackError calc_add(Stack* stack) {
   double     add1, add2;
   StackError r1, r2;
 
-  r1 = stack_pop(stack, &add1);
-  r2 = stack_pop(stack, &add2);
+  r1 = stack_pop(stack, &add2);
+  r2 = stack_pop(stack, &add1);
 
   assert(r1 == STACK_OK &&
          "calc_add -- Stack memory error. Processing r1 from stack_pop.");

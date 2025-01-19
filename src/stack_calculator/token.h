@@ -7,15 +7,6 @@
 
 typedef enum
 {
-  TOKEN_OK,
-  TOKEN_INVALID_UNDEFINED,
-  TOKEN_INVALID_NUMBER,
-  TOKEN_INVALID_OPERATOR,
-  TOKEN_NULL_POINTER
-} TokenError;
-
-typedef enum
-{
   TOKEN_PLUS,      // +
   TOKEN_MINUS,     // -
   TOKEN_MULTIPLY,  // *

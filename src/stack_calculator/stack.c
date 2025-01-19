@@ -2,36 +2,46 @@
 
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 void stack_init(Stack* stack) {
+  if (stack == NULL) {
+    return;
+  }
+
   stack->top      = 0;
-  stack->values   = (double*)malloc(sizeof(double) * STACK_MAX_SIZE);
   stack->capacity = STACK_MAX_SIZE;
+  stack->values   = (double*)malloc(sizeof(double) * STACK_MAX_SIZE);
+
+  if (stack->values == NULL) {
+    stack->capacity = 0;
+    return;
+  }
 }
 
 void stack_free(Stack* stack) {
-  free(stack->values);
-  stack->values   = NULL;
-  stack->top      = 0;
-  stack->capacity = 0;
+  if (stack->values != NULL) {
+    free(stack->values);
+    stack->values   = NULL;
+    stack->top      = 0;
+    stack->capacity = 0;
+  }
 }
 
 StackError stack_push(Stack* stack, double value) {
   // first check if the stack is full
   if (stack->top == stack->capacity) {
     // if it is, grow the stack
-    size_t  new_capacity = stack->capacity *= 2;
-    double* new_values   = realloc(stack->values, new_capacity);
+    size_t new_capacity = stack->capacity * 2;
 
-    // if memory allocation failed
+    double* new_values = realloc(stack->values, new_capacity * sizeof(double));
     if (new_values == NULL) {
       return STACK_OVERFLOW;
     }
 
     stack->capacity = new_capacity;
     stack->values   = new_values;
-    stack->top++;
   }
 
   // else, just add the value to the stack

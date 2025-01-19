@@ -65,12 +65,46 @@ void test_scan_token(void) {
 }
 
 void test_scan_line(void) {
-  scanner_init(&scanner, SCANNER_INIT_SOURCE);
-  Stack stack;
-  stack_init(&stack);
-  scan_line(&scanner, &stack);
+  Stack           stack;
+  double          result = 0;
+  StackError      peek_error;
+  CalculatorError calc_error;
 
-  TEST_FAIL();
+  stack_init(&stack);
+
+  scanner_init(&scanner, "10 13 +");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(23, result);
+
+  scanner_init(&scanner, "5 4 ^");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(pow(5, 4), result);
+
+  scanner_init(&scanner, "5 5 *");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(5 * 5, result);
+
+  scanner_init(&scanner, "5 20 -");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(-15, result);
+
+  scanner_init(&scanner, "20 5 /");
+  calc_error = scan_line(&scanner, &stack);
+  peek_error = stack_peek(&stack, &result);
+  TEST_ASSERT_EQUAL(STACK_OK, peek_error);
+  TEST_ASSERT_EQUAL_INT(4, result);
+
+  TEST_ASSERT_EQUAL(ERROR_NONE, calc_error.type);
+
+  stack_free(&stack);
 }
 
 void run_scanner_tests(void) {
@@ -83,6 +117,7 @@ void run_scanner_tests(void) {
   RUN_TEST(test_is_at_end);
   RUN_TEST(test_skip_whitespace);
   RUN_TEST(test_scan_token);
+  RUN_TEST(test_scan_line);
 
   tearDown_scanner();
 }
