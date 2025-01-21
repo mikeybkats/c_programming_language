@@ -37,4 +37,6 @@ typedef struct
   } error;
 } CalculatorError;
 
+#define CALCULATOR_OK 0
+
 #endif

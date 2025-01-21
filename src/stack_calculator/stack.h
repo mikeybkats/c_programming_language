@@ -11,6 +11,10 @@
 #define STACK_MAX_SIZE 256
 
 // Stack structure
+// TODO: Future enhancement - refactor stack to handle both numbers and
+// operators by making it type-generic. This would allow for more flexible
+// evaluation strategies and better separation of scanning and evaluation
+// concerns.
 typedef struct
 {
   double* values;

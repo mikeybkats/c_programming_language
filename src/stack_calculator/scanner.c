@@ -122,6 +122,13 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
       return return_token_error(err_t);
     }
 
+    // Stack structure
+    // TODO: Future enhancement - refactor stack to handle both numbers and
+    // move evaluate function into seperate file
+    // and push tokens for operations into stack here instead of evaluating
+    // immediately
+
+    // evaluate the token
     StackError err_s = evaluate_token(&token, stack);
 
     if (err_s != STACK_OK) {

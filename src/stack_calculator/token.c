@@ -89,6 +89,9 @@ TokenError make_eof(Token* token) {
   return TOKEN_OK;
 }
 
+// TODO: Future enhancement - refactor stack to handle both numbers and
+// operators evaluate_token should be re-moved from here and into a seperate
+// file for calcuator evaluation
 StackError evaluate_token(Token* token, Stack* stack) {
   switch (token->type) {
     case TOKEN_PLUS:
