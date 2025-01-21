@@ -10,13 +10,27 @@ void scanner_init(Scanner* scanner, const char* source) {
   scanner->source   = source;
   scanner->position = 0;
   scanner->start    = 0;
+  scanner->mode     = MODE_REPL;
 }
 
 bool is_at_end(Scanner* scanner) {
   assert(scanner != NULL && scanner->source != NULL &&
          "scanner -- is_at_end -- Null pointer error.");
 
-  return scanner->source[scanner->position] == '\0';
+  char current = scanner->source[scanner->position];
+
+  if (scanner->mode == MODE_REPL) {
+    // printf("REPL Mode -- current: %c\n", current == '\n' ? '\n' : current);
+    return current == '\n' || current == '\0';
+  }
+
+  // TODO: currently scanner is created as REPL mode so this will never run. Add
+  // a file read mode.
+  if (scanner->mode == MODE_FILE) {
+    return current == '\0';
+  }
+
+  return false;
 }
 
 char peek(Scanner* scanner) {
@@ -82,6 +96,7 @@ bool match(Scanner* scanner, char expected) {
 TokenError scan_token(Scanner* scanner, Token* token) {
   // // get current character
   char current = peek(scanner);
+  printf("scan_token -- current: %c\n", current);
 
   // // if it's a digit
   if (is_digit(current)) {

@@ -3,6 +3,12 @@
 
 typedef enum
 {
+  MODE_REPL,
+  MODE_FILE
+} CalculatorMode;
+
+typedef enum
+{
   ERROR_STACK,
   ERROR_TOKEN,
   ERROR_NONE

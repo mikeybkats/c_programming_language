@@ -12,6 +12,8 @@ CalculatorError calculator_evaluate(const char* input, Stack* stack) {
   CalculatorError calc_error;
   scanner_init(&scanner, input);
 
+  printf("Scanning line\n");
+  printf("Line: %s\n", input);
   calc_error = scan_line(&scanner, stack);
 
   return calc_error;
@@ -79,5 +81,15 @@ void handle_error(CalculatorError error) {
     strcat(message, "No error");
   }
 
-  printf("Error: %s\n", message);
+  printf("%s\n", message);
+}
+
+void print_stack(Stack* stack) {
+  printf("------\n");
+  printf("Stack:\n");
+  printf("------\n");
+  for (int i = 0; i < stack->top; i++) {
+    printf("Index: %d, Value: %f\n", i, stack->values[i]);
+  }
+  printf("\n");
 }

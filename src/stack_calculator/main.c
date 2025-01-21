@@ -18,12 +18,15 @@ static void repl(Stack* stack) {
     CalculatorError calc_error = calculator_evaluate(line, stack);
 
     if (calc_error.type != ERROR_NONE) {
-      printf("Error: %s\n", handle_error(calc_error));
+      handle_error(calc_error);
+
+      print_stack(stack);
     } else {
       print_result(stack);
     }
   }
 }
+
 int main() {
   Stack stack;
   stack_init(&stack);

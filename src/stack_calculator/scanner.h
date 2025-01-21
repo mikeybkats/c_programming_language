@@ -11,9 +11,10 @@
 
 typedef struct
 {
-  const char* source;
-  size_t      position;  // current position in source
-  size_t      start;     // start of current token
+  const char*    source;
+  size_t         position;  // current position in source
+  size_t         start;     // start of current token
+  CalculatorMode mode;
 } Scanner;
 
 // Initialize a scanner with source text
