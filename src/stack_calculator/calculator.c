@@ -12,11 +12,18 @@ CalculatorError calculator_evaluate(const char* input, Stack* stack) {
   CalculatorError calc_error;
   scanner_init(&scanner, input);
 
-  printf("Scanning line\n");
-  printf("Line: %s\n", input);
   calc_error = scan_line(&scanner, stack);
 
   return calc_error;
+}
+
+void print_number(double num) {
+  // Check if number has decimal part by comparing with its integer part
+  if (num == (int)num) {
+    printf("%.0f\n", num);  // Print without decimal
+  } else {
+    printf("%g\n", num);  // Print with decimal
+  }
 }
 
 void print_result(Stack* stack) {
@@ -24,7 +31,7 @@ void print_result(Stack* stack) {
 
   stack_peek(stack, &result);
 
-  printf("Result: %f\n", result);
+  print_number(result);
 }
 
 char* get_stack_error_message(StackError error) {
@@ -82,14 +89,4 @@ void handle_error(CalculatorError error) {
   }
 
   printf("%s\n", message);
-}
-
-void print_stack(Stack* stack) {
-  printf("------\n");
-  printf("Stack:\n");
-  printf("------\n");
-  for (int i = 0; i < stack->top; i++) {
-    printf("Index: %d, Value: %f\n", i, stack->values[i]);
-  }
-  printf("\n");
 }

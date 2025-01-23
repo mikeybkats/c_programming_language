@@ -50,4 +50,11 @@ size_t stack_size(const Stack* stack);
  */
 bool stack_is_empty(const Stack* stack);
 
+/**
+ * ## Function: print_stack
+ *
+ * @brief Prints the stack to the console
+ */
+void print_stack(const Stack* stack);
+
 #endif

@@ -10,6 +10,8 @@
 // Maximum size of the stack
 #define STACK_MAX_SIZE 256
 
+#define INT_MAX 2147483647
+
 CalculatorError return_stack_error(StackError stack_error);
 
 // Calculator operations

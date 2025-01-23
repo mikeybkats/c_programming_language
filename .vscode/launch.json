@@ -5,16 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug C",
+      "name": "Debug Stack Calculator",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/src/outputExecutable",
+      "program": "${workspaceFolder}/build/calculator",
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "lldb",
-      "preLaunchTask": "clox build",
+      "preLaunchTask": "build",
+      "args": [
+        "${workspaceFolder}/tests/test_input.txt"
+      ],
       "setupCommands": [
         {
             "description": "Enable pretty-printing for lldb",

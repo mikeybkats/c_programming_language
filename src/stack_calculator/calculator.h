@@ -12,8 +12,6 @@ CalculatorError calculator_evaluate(const char* input, Stack* stack);
 
 void print_result(Stack* stack);
 
-void print_stack(Stack* stack);
-
 // Error handling
 void handle_error(CalculatorError error);
 

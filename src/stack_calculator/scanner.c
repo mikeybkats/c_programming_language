@@ -96,7 +96,6 @@ bool match(Scanner* scanner, char expected) {
 TokenError scan_token(Scanner* scanner, Token* token) {
   // // get current character
   char current = peek(scanner);
-  printf("scan_token -- current: %c\n", current);
 
   // // if it's a digit
   if (is_digit(current)) {
