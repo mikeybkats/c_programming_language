@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "calculator.h"
+#include "scanner.h"
 #include "stack.h"
 #include "stack_calculator.h"
 
-void evaluate(char* line, Stack* stack) {
-  CalculatorError calc_error = calculator_evaluate(line, stack);
+void evaluate(Stack* stack, Scanner* scanner) {
+  CalculatorError calc_error = scan_line(scanner, stack);
 
   if (calc_error.type != ERROR_NONE) {
     handle_error(calc_error);
@@ -16,7 +18,7 @@ void evaluate(char* line, Stack* stack) {
   }
 }
 
-static void repl(Stack* stack) {
+static void repl(Stack* stack, Scanner* scanner) {
   char line[1024];
 
   for (;;) {
@@ -27,7 +29,10 @@ static void repl(Stack* stack) {
       break;
     }
 
-    evaluate(line, stack);
+    strcat(scanner->source, line);
+    strcat(scanner->source, "\n");
+
+    evaluate(stack, scanner);
   }
 }
 
@@ -74,11 +79,16 @@ static char* readFile(const char* path) {
 }
 
 int main(int argc, char* argv[]) {
-  Stack stack;
+  Stack   stack;
+  Scanner scanner;
+
   stack_init(&stack);
 
+  printf("argc: %d\n", argc);
   if (argc == 1) {
-    repl(&stack);
+    scanner_init(&scanner, NULL, MODE_REPL);
+
+    repl(&stack, &scanner);
   } else {
     if (argv[1] == NULL) {
       printf("No file provided\n");
@@ -87,12 +97,12 @@ int main(int argc, char* argv[]) {
 
     char* file_contents = readFile(argv[1]);
 
-    evaluate(file_contents, &stack);
+    scanner_init(&scanner, file_contents, MODE_FILE);
+
+    evaluate(&stack, &scanner);
 
     return 0;
   }
-
-  repl(&stack);
 
   stack_free(&stack);
 

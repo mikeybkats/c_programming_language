@@ -4,7 +4,8 @@
     "Makefile.*": "makefile",
     "stack.h": "c",
     "token.h": "c",
-    "stack_calculator.h": "c"
+    "stack_calculator.h": "c",
+    "stdbool.h": "c"
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "xaver.clang-format",

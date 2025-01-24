@@ -7,16 +7,6 @@
 #include "calculator_types.h"
 #include "scanner.h"
 
-CalculatorError calculator_evaluate(const char* input, Stack* stack) {
-  Scanner         scanner;
-  CalculatorError calc_error;
-  scanner_init(&scanner, input);
-
-  calc_error = scan_line(&scanner, stack);
-
-  return calc_error;
-}
-
 void print_number(double num) {
   // Check if number has decimal part by comparing with its integer part
   if (num == (int)num) {

@@ -11,14 +11,14 @@
 
 typedef struct
 {
-  const char*    source;
+  char*          source;
   size_t         position;  // current position in source
   size_t         start;     // start of current token
   CalculatorMode mode;
 } Scanner;
 
 // Initialize a scanner with source text
-void scanner_init(Scanner* scanner, const char* source);
+void scanner_init(Scanner* scanner, const char* source, CalculatorMode mode);
 
 // Check if we've reached the end of input
 bool is_at_end(Scanner* scanner);

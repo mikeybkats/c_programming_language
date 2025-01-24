@@ -2,15 +2,28 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_NUMBER_LENGTH 32
+#define MAX_STRING_SIZE   1024
 
-void scanner_init(Scanner* scanner, const char* source) {
-  // stack allocated scanner
-  scanner->source   = source;
+void scanner_init(Scanner* scanner, const char* source, CalculatorMode mode) {
+  scanner->source = malloc(MAX_STRING_SIZE);
+
+  if (source != NULL) {
+    size_t len = strlen(source);
+
+    // stack allocated scanner
+    scanner->source = (char*)malloc(len + 1);
+
+    if (scanner->source != NULL) {
+      strcpy(scanner->source, source);
+    }
+  }
+
   scanner->position = 0;
   scanner->start    = 0;
-  scanner->mode     = MODE_REPL;
+  scanner->mode     = mode;
 }
 
 bool is_at_end(Scanner* scanner) {
