@@ -84,10 +84,8 @@ int main(int argc, char* argv[]) {
 
   stack_init(&stack);
 
-  printf("argc: %d\n", argc);
   if (argc == 1) {
     scanner_init(&scanner, NULL, MODE_REPL);
-
     repl(&stack, &scanner);
   } else {
     if (argv[1] == NULL) {
