@@ -2,8 +2,6 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 CalculatorError return_stack_error(StackError stack_error) {
   CalculatorError error;

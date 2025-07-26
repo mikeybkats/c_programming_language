@@ -75,6 +75,8 @@ TokenError make_operator(char op, Token* token) {
     case 's':
       token->type = TOKEN_SQRT;
       break;
+    default:
+      printf("no operator available\n");
   }
 
   return TOKEN_OK;

@@ -33,12 +33,9 @@ bool is_at_end(Scanner* scanner) {
   char current = scanner->source[scanner->position];
 
   if (scanner->mode == MODE_REPL) {
-    // printf("REPL Mode -- current: %c\n", current == '\n' ? '\n' : current);
     return current == '\n' || current == '\0';
   }
 
-  // TODO: currently scanner is created as REPL mode so this will never run. Add
-  // a file read mode.
   if (scanner->mode == MODE_FILE) {
     return current == '\0';
   }
@@ -132,6 +129,8 @@ TokenError scan_token(Scanner* scanner, Token* token) {
   if (is_operator(current)) {
     return make_operator(advance(scanner), token);
   }
+
+  printf("Unidentified Token: %c\n", current);
 
   return TOKEN_INVALID_UNDEFINED;
 }

@@ -4,7 +4,6 @@
 #include "calculator.h"
 #include "scanner.h"
 #include "stack.h"
-#include "stack_calculator.h"
 
 void evaluate(Stack* stack, Scanner* scanner) {
   CalculatorError calc_error = scan_line(scanner, stack);

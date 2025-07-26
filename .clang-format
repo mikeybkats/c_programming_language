@@ -23,7 +23,6 @@ BinPackParameters: false
 AlignAfterOpenBracket: Align
 
 # Enums
-BinPackEnums: false
 AllowShortEnumsOnASingleLine: false
 
 # Array formatting
