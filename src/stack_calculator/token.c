@@ -27,6 +27,10 @@ bool is_digit(char c) {
   return c >= '0' && c <= '9';
 }
 
+bool is_alpha(char c) {
+  return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
 bool is_operator(char c) {
   switch (c) {
     case '+':
@@ -92,7 +96,7 @@ TokenError make_eof(Token* token) {
 }
 
 // TODO: Future enhancement - refactor stack to handle both numbers and
-// operators evaluate_token should be re-moved from here and into a seperate
+// operators. evaluate_token should be re-moved from here and into a seperate
 // file for calcuator evaluation
 StackError evaluate_token(Token* token, Stack* stack) {
   switch (token->type) {

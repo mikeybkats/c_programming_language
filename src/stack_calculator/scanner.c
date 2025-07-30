@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "calculator_types.h"
+#include "debug.h"
+
 #define MAX_NUMBER_LENGTH 32
 #define MAX_STRING_SIZE   1024
 
@@ -33,7 +36,8 @@ bool is_at_end(Scanner* scanner) {
   char current = scanner->source[scanner->position];
 
   if (scanner->mode == MODE_REPL) {
-    return current == '\n' || current == '\0';
+    // return !(current == '\n') || current == '\0';
+    return false;
   }
 
   if (scanner->mode == MODE_FILE) {
@@ -106,6 +110,7 @@ bool match(Scanner* scanner, char expected) {
 TokenError scan_token(Scanner* scanner, Token* token) {
   // // get current character
   char current = peek(scanner);
+  printf("scan_token -- current: %c\n", current);
 
   // // if it's a digit
   if (is_digit(current)) {
@@ -130,12 +135,18 @@ TokenError scan_token(Scanner* scanner, Token* token) {
     return make_operator(advance(scanner), token);
   }
 
-  printf("Unidentified Token: %c\n", current);
+  printf("Invalid Token: %c -- ", current);
+  print_source(scanner->source);
+
+  if (is_alpha(current)) {
+    return TOKEN_INVALID_ALPHA;
+  }
 
   return TOKEN_INVALID_UNDEFINED;
 }
 
 CalculatorError scan_line(Scanner* scanner, Stack* stack) {
+  printf("scan line\n");
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
 
@@ -145,14 +156,14 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
     TokenError err_t = scan_token(scanner, &token);
 
     if (err_t != TOKEN_OK) {
+      // clean stack
       return return_token_error(err_t);
     }
 
     // Stack structure
     // TODO: Future enhancement - refactor stack to handle both numbers and
-    // move evaluate function into seperate file
-    // and push tokens for operations into stack here instead of evaluating
-    // immediately
+    // operators. move evaluate function into seperate file and push tokens for
+    // operations into stack here instead of evaluating immediately
 
     // evaluate the token
     StackError err_s = evaluate_token(&token, stack);

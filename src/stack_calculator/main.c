@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "calculator.h"
+#include "debug.h"
 #include "scanner.h"
 #include "stack.h"
 
@@ -28,8 +29,12 @@ static void repl(Stack* stack, Scanner* scanner) {
       break;
     }
 
+    printf("getting line: %s\n", line);
+
     strcat(scanner->source, line);
-    strcat(scanner->source, "\n");
+    // strcat(scanner->source, "\n");
+
+    printf("source:\n %s\n", scanner->source);
 
     evaluate(stack, scanner);
   }
@@ -41,17 +46,28 @@ static char* readFile(const char* path) {
   // This can happen if the file doesn’t exist or the user doesn’t have access
   // to it. It’s pretty common—people mistype paths all the time.
   if (file == NULL) {
-    fprintf(stderr, "Could not open file \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Could not open file \"%s\".\n", path);
+    exit(error);
   }
 
   // classic c trick. we need to know the size of the file to allocate an
   // appropriate buffer. start by seeking to the end
-  fseek(file, 0L, SEEK_END);
+  if (fseek(file, 0L, SEEK_END) != 0) {
+    int error =
+        fprintf(stderr, "Could not seek to end of file \"%s\".\n", path);
+    (void)fclose(file);
+    exit(error);
+  }
   // then get the current position - that's the file size
   size_t fileSize = ftell(file);
   // then rewind to beginning
-  rewind(file);
+  // rewind(file);
+  if (fseek(file, 0L, SEEK_SET) != 0) {
+    int error =
+        fprintf(stderr, "Could not seek to beginning of file \"%s\".\n", path);
+    (void)fclose(file);
+    exit(error);
+  }
 
   // allocate the filesize + 1 (to make room for the null byte \0)
   char* buffer = (char*)malloc(fileSize + 1);
@@ -59,20 +75,20 @@ static char* readFile(const char* path) {
   // This is a much rarer error. if the user's machine can't allocate enough
   // memory to run this, then their is likely a larger systemic error.
   if (buffer == NULL) {
-    fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
+    exit(error);
   }
 
   size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
   // an unlikely failure. but should still check for it.
   if (bytesRead < fileSize) {
-    fprintf(stderr, "Could not read file \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Could not read file \"%s\".\n", path);
+    exit(error);
   }
 
   buffer[bytesRead] = '\0';
 
-  fclose(file);
+  (void)fclose(file);
 
   return buffer;
 }

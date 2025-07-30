@@ -36,6 +36,7 @@ TokenError token_init(Token* token);
 
 // Helper functions
 bool is_digit(char c);
+bool is_alpha(char c);
 bool is_operator(char c);
 
 // Create tokens

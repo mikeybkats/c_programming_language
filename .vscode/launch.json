@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug stack calculator (REPL mode)",
+            "program": "${workspaceFolder}/build/calculator",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug stack calculator (file input)",
+            "program": "${workspaceFolder}/build/calculator",
+            "args": ["${workspaceFolder}/tests/test_input.txt"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug stack calculator (custom file)",
+            "program": "${workspaceFolder}/build/calculator",
+            "args": ["${input:filePath}"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+        }
+    ],
+    "inputs": [
+        {
+            "id": "filePath",
+            "type": "promptString",
+            "description": "Enter the path to the input file",
+            "default": "${workspaceFolder}/tests/test_input.txt"
+        }
+    ]
+}
