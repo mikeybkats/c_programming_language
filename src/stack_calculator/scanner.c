@@ -36,8 +36,14 @@ bool is_at_end(Scanner* scanner) {
   char current = scanner->source[scanner->position];
 
   if (scanner->mode == MODE_REPL) {
-    // return !(current == '\n') || current == '\0';
-    return false;
+    if (current == '\n') {
+      advance(scanner);
+      return true;
+    }
+    // handle the null terminator for strings that don't end in new lines
+    if (current == '\0') {
+      return true;
+    }
   }
 
   if (scanner->mode == MODE_FILE) {
@@ -86,9 +92,10 @@ void skip_whitespace(Scanner* scanner) {
       case '\t':
       case '\r':
       case '\n':
-      case ' ':
+      case ' ': {
         advance(scanner);
         break;
+      }
 
       default:
         return;
@@ -110,7 +117,6 @@ bool match(Scanner* scanner, char expected) {
 TokenError scan_token(Scanner* scanner, Token* token) {
   // // get current character
   char current = peek(scanner);
-  printf("scan_token -- current: %c\n", current);
 
   // // if it's a digit
   if (is_digit(current)) {
@@ -135,9 +141,6 @@ TokenError scan_token(Scanner* scanner, Token* token) {
     return make_operator(advance(scanner), token);
   }
 
-  printf("Invalid Token: %c -- ", current);
-  print_source(scanner->source);
-
   if (is_alpha(current)) {
     return TOKEN_INVALID_ALPHA;
   }
@@ -146,24 +149,16 @@ TokenError scan_token(Scanner* scanner, Token* token) {
 }
 
 CalculatorError scan_line(Scanner* scanner, Stack* stack) {
-  printf("scan line\n");
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
-
     Token token;
     token_init(&token);
 
     TokenError err_t = scan_token(scanner, &token);
 
     if (err_t != TOKEN_OK) {
-      // clean stack
       return return_token_error(err_t);
     }
-
-    // Stack structure
-    // TODO: Future enhancement - refactor stack to handle both numbers and
-    // operators. move evaluate function into seperate file and push tokens for
-    // operations into stack here instead of evaluating immediately
 
     // evaluate the token
     StackError err_s = evaluate_token(&token, stack);

@@ -13,7 +13,4 @@ CalculatorError calculator_evaluate(Stack* stack, Scanner* scanner);
 
 void print_result(Stack* stack);
 
-// Error handling
-void handle_error(CalculatorError error);
-
 #endif

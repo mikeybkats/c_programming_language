@@ -3,6 +3,7 @@
 
 #include "calculator.h"
 #include "debug.h"
+#include "error.h"
 #include "scanner.h"
 #include "stack.h"
 
@@ -10,7 +11,7 @@ void evaluate(Stack* stack, Scanner* scanner) {
   CalculatorError calc_error = scan_line(scanner, stack);
 
   if (calc_error.type != ERROR_NONE) {
-    handle_error(calc_error);
+    handle_error(calc_error, scanner->source[scanner->position]);
 
     print_stack(stack);
   } else {
@@ -29,12 +30,7 @@ static void repl(Stack* stack, Scanner* scanner) {
       break;
     }
 
-    printf("getting line: %s\n", line);
-
     strcat(scanner->source, line);
-    // strcat(scanner->source, "\n");
-
-    printf("source:\n %s\n", scanner->source);
 
     evaluate(stack, scanner);
   }
