@@ -2,10 +2,12 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "calculator_types.h"
 #include "debug.h"
+#include "flag.h"
 
 #define MAX_NUMBER_LENGTH 32
 #define MAX_STRING_SIZE   1024
@@ -145,6 +147,10 @@ TokenError scan_token(Scanner* scanner, Token* token) {
     return TOKEN_INVALID_ALPHA;
   }
 
+  if (is_flag(current)) {
+    return TOKEN_FLAG_OK;
+  }
+
   return TOKEN_INVALID_UNDEFINED;
 }
 
@@ -156,15 +162,24 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
 
     TokenError err_t = scan_token(scanner, &token);
 
-    if (err_t != TOKEN_OK) {
-      return return_token_error(err_t);
-    }
+    if (err_t == TOKEN_FLAG_OK) {
+      // proces flags
+      char** flags = malloc(sizeof(char*) * 10);
 
-    // evaluate the token
-    StackError err_s = evaluate_token(&token, stack);
+      queue_flags(scanner, flags);
 
-    if (err_s != STACK_OK) {
-      return return_stack_error(err_s);
+    } else {
+      if (err_t != TOKEN_OK) {
+        return return_token_error(err_t);
+      }
+      // evaluate the token
+      StackError err_s = evaluate_token(&token, stack);
+
+      process_flags(flags, stack);
+
+      if (err_s != STACK_OK) {
+        return return_stack_error(err_s);
+      }
     }
   }
 

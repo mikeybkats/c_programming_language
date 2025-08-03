@@ -28,12 +28,19 @@ typedef enum
 typedef enum
 {
   TOKEN_OK,
+  TOKEN_FLAG_OK,
   TOKEN_INVALID_ALPHA,
   TOKEN_INVALID_UNDEFINED,
   TOKEN_INVALID_NUMBER,
   TOKEN_INVALID_OPERATOR,
-  TOKEN_NULL_POINTER
+  TOKEN_NULL_POINTER,
+  TOKEN_UNKOWN_FLAG
 } TokenError;
+
+typedef enum {
+  FLAG_OK,
+  FLAG_UNKOWN
+} FlagError;
 
 typedef struct
 {
@@ -41,6 +48,7 @@ typedef struct
   union {
     StackError stack_error;
     TokenError token_error;
+    FlagError flag_error;
   } error;
 } CalculatorError;
 

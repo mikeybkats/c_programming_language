@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "stack.h"
 #include "token.h"
 
 void debug_token(Token token) {

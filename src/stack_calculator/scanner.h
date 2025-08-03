@@ -50,4 +50,6 @@ TokenError scan_token(Scanner* scanner, Token* token);
 
 CalculatorError scan_line(Scanner* scanner, Stack* stack);
 
+TokenError scan_flag(Scanner* scannner, char* flag);
+
 #endif  // SCANNER_H
