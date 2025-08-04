@@ -22,7 +22,8 @@ typedef enum
   STACK_DIVISION_BY_ZERO,
   STACK_NULL_POINTER,
   STACK_NAN,
-  STACK_EVAL_ERROR
+  STACK_EVAL_ERROR,
+  STACK_FLAG_ERROR
 } StackError;
 
 typedef enum

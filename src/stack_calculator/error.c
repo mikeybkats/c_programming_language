@@ -19,6 +19,8 @@ char* get_stack_error_message(StackError error) {
       return "Not a number";
     case STACK_EVAL_ERROR:
       return "Evaluation error";
+    case STACK_FLAG_ERROR:
+      return "Flag Error";
     default:
       return "Unknown stack error";
   }

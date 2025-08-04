@@ -22,8 +22,6 @@ typedef struct
   size_t  capacity;
 } Stack;
 
-#include "stack_calculator.h"
-
 // Core stack operations
 void       stack_init(Stack* stack);
 void       stack_free(Stack* stack);

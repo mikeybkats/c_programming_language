@@ -2,7 +2,7 @@
 #define TOKEN_H
 
 #include <stdbool.h>
-
+#include "stack.h"
 #include "calculator_types.h"
 
 typedef enum

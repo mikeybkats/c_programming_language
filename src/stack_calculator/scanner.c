@@ -85,6 +85,12 @@ char advance(Scanner* scanner) {
   return scanner->source[scanner->position - 1];
 }
 
+void consume(Scanner* scanner) {
+  while (!is_at_end(scanner)) {
+    advance(scanner);
+  }
+}
+
 void skip_whitespace(Scanner* scanner) {
   assert(scanner != NULL && scanner->source != NULL &&
          "scanner -- skip_whitespace -- Null pointer error.");
@@ -161,25 +167,28 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
     token_init(&token);
 
     TokenError err_t = scan_token(scanner, &token);
+    StackError err_s;
 
     if (err_t == TOKEN_FLAG_OK) {
-      // proces flags
-      char** flags = malloc(sizeof(char*) * 10);
+      // proces flags must happen after evaluation
+      // char** flags = malloc(sizeof(char*) * 10);
+      Flags* flags = malloc(sizeof(Flags));
+      init_flags(flags);
 
       queue_flags(scanner, flags);
+
+      err_s = process_flags(flags, stack);
 
     } else {
       if (err_t != TOKEN_OK) {
         return return_token_error(err_t);
       }
       // evaluate the token
-      StackError err_s = evaluate_token(&token, stack);
+      err_s = evaluate_token(&token, stack);
+    }
 
-      process_flags(flags, stack);
-
-      if (err_s != STACK_OK) {
-        return return_stack_error(err_s);
-      }
+    if (err_s != STACK_OK) {
+      return return_stack_error(err_s);
     }
   }
 
