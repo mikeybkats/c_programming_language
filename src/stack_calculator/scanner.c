@@ -85,8 +85,8 @@ char advance(Scanner* scanner) {
   return scanner->source[scanner->position - 1];
 }
 
-void consume(Scanner* scanner) {
-  while (!is_at_end(scanner)) {
+void consume(Scanner* scanner, int length) {
+  for (int i = 0; i < length; i++) {
     advance(scanner);
   }
 }

@@ -14,7 +14,7 @@ typedef enum
 
 typedef struct {
  size_t length;
- FlagType* flags;
+ FlagType* flagType;
 } Flags;
 
 bool is_flag(char c);

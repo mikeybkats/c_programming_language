@@ -33,7 +33,7 @@ char peek_next(Scanner* scanner);
 // char just moved past
 char advance(Scanner* scanner);
 
-void consume(Scanner* scanner);
+void consume(Scanner* scanner, int length);
 
 // Skip any whitespace characters
 void skip_whitespace(Scanner* scanner);

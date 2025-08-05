@@ -13,7 +13,7 @@ void print_bits(double num) {
   printf("\n");
 }
 
-void print_number(double num) {
+void print_decimal(double num) {
   // Check if number has decimal part by comparing with its integer part
   if (num == (int)num) {
     printf("%.0f\n", num);  // Print without decimal
@@ -22,10 +22,14 @@ void print_number(double num) {
   }
 }
 
+void print_hexadecimal(double num) {
+  printf("%#.2x\n", (int)num);
+}
+
 void print_result(Stack* stack) {
   double result;
 
   stack_peek(stack, &result);
 
-  print_number(result);
+  print_decimal(result);
 }
