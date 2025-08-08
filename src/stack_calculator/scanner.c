@@ -161,6 +161,7 @@ TokenError scan_token(Scanner* scanner, Token* token) {
 }
 
 CalculatorError scan_line(Scanner* scanner, Stack* stack) {
+  CalculatorError err;
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
     Token token;
@@ -171,13 +172,16 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
 
     if (err_t == TOKEN_FLAG_OK) {
       // proces flags must happen after evaluation
-      // char** flags = malloc(sizeof(char*) * 10);
       Flags* flags = malloc(sizeof(Flags));
       init_flags(flags);
 
       queue_flags(scanner, flags);
 
       err_s = process_flags(flags, stack);
+      if (err_s == STACK_OK) {
+        err.type = ERROR_NONE;
+        return err;
+      }
 
     } else {
       if (err_t != TOKEN_OK) {
@@ -192,7 +196,6 @@ CalculatorError scan_line(Scanner* scanner, Stack* stack) {
     }
   }
 
-  CalculatorError err;
   err.type = ERROR_NONE;
   return err;
 }
