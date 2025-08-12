@@ -55,4 +55,6 @@ CalculatorResult* scan_line(Scanner* scanner, Stack* stack);
 
 TokenError scan_flag(Scanner* scannner, char* flag);
 
+void free_calculator_result(CalculatorResult* result);
+
 #endif  // SCANNER_H

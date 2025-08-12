@@ -21,6 +21,8 @@ void evaluate(Stack* stack, Scanner* scanner) {
   } else {
     print_result(calc_result);
   }
+
+  free_calculator_result(calc_result);
 }
 
 static void repl(Stack* stack, Scanner* scanner) {

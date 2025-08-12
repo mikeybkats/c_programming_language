@@ -161,10 +161,23 @@ TokenError scan_token(Scanner* scanner, Token* token) {
   return TOKEN_INVALID_UNDEFINED;
 }
 
+void free_calculator_result(CalculatorResult* result) {
+  if (result == NULL) return;  // defensive check
+
+  if (result->type == RESULT_ERROR) {
+    free(result->as.error);
+  }
+  if (result->type == RESULT_VALUE) {
+    free(result->as.value);
+  }
+
+  free(result);
+}
+
 CalculatorResult* scan_line(Scanner* scanner, Stack* stack) {
   CalculatorResult* result = malloc(sizeof(CalculatorResult));
   CalculatorValue*  value  = malloc(sizeof(CalculatorValue));
-  Flags*            flags  = malloc(sizeof(Flags));
+  Flags             flags[MAX_FLAGS];
 
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
@@ -198,9 +211,7 @@ CalculatorResult* scan_line(Scanner* scanner, Stack* stack) {
   }
 
   result->type = RESULT_VALUE;
-  if (flags != NULL) {
-    value->flags = *flags;
-  }
+  value->flags = *flags;
   stack_peek(stack, &value->value);
   result->as.value = value;
 
