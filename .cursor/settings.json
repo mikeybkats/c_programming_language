@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "*.h": "c",
+    "*.c": "c",
+    "*.hpp": "cpp",
+    "*.cpp": "cpp",
+    "Makefile.*": "makefile",
+    ".clangd": "yaml",
+    ".clang-format": "yaml"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "xaver.clang-format"
+}

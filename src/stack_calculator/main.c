@@ -1,22 +1,29 @@
 #include <stdio.h>
+#include <string.h>
 
-#include "calculator.h"
+#include "calculator_types.h"
+#include "debug.h"
+#include "error.h"
+#include "print.h"
+#include "scanner.h"
 #include "stack.h"
-#include "stack_calculator.h"
 
-void evaluate(char* line, Stack* stack) {
-  CalculatorError calc_error = calculator_evaluate(line, stack);
+void evaluate(Stack* stack, Scanner* scanner) {
+  CalculatorResult* calc_result = scan_line(scanner, stack);
 
-  if (calc_error.type != ERROR_NONE) {
-    handle_error(calc_error);
-
+  if (calc_result->type != RESULT_VALUE) {
+    if (calc_result->type == RESULT_NONE) {
+    } else {
+      handle_error(calc_result->as.error, scanner->source[scanner->position]);
+    }
     print_stack(stack);
+
   } else {
-    print_result(stack);
+    print_result(calc_result);
   }
 }
 
-static void repl(Stack* stack) {
+static void repl(Stack* stack, Scanner* scanner) {
   char line[1024];
 
   for (;;) {
@@ -27,7 +34,9 @@ static void repl(Stack* stack) {
       break;
     }
 
-    evaluate(line, stack);
+    strcat(scanner->source, line);
+
+    evaluate(stack, scanner);
   }
 }
 
@@ -37,17 +46,28 @@ static char* readFile(const char* path) {
   // This can happen if the file doesn’t exist or the user doesn’t have access
   // to it. It’s pretty common—people mistype paths all the time.
   if (file == NULL) {
-    fprintf(stderr, "Could not open file \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Could not open file \"%s\".\n", path);
+    exit(error);
   }
 
   // classic c trick. we need to know the size of the file to allocate an
   // appropriate buffer. start by seeking to the end
-  fseek(file, 0L, SEEK_END);
+  if (fseek(file, 0L, SEEK_END) != 0) {
+    int error =
+        fprintf(stderr, "Could not seek to end of file \"%s\".\n", path);
+    (void)fclose(file);
+    exit(error);
+  }
   // then get the current position - that's the file size
   size_t fileSize = ftell(file);
   // then rewind to beginning
-  rewind(file);
+  // rewind(file);
+  if (fseek(file, 0L, SEEK_SET) != 0) {
+    int error =
+        fprintf(stderr, "Could not seek to beginning of file \"%s\".\n", path);
+    (void)fclose(file);
+    exit(error);
+  }
 
   // allocate the filesize + 1 (to make room for the null byte \0)
   char* buffer = (char*)malloc(fileSize + 1);
@@ -55,30 +75,33 @@ static char* readFile(const char* path) {
   // This is a much rarer error. if the user's machine can't allocate enough
   // memory to run this, then their is likely a larger systemic error.
   if (buffer == NULL) {
-    fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Not enough memory to read \"%s\".\n", path);
+    exit(error);
   }
 
   size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
   // an unlikely failure. but should still check for it.
   if (bytesRead < fileSize) {
-    fprintf(stderr, "Could not read file \"%s\".\n", path);
-    exit(74);
+    int error = fprintf(stderr, "Could not read file \"%s\".\n", path);
+    exit(error);
   }
 
   buffer[bytesRead] = '\0';
 
-  fclose(file);
+  (void)fclose(file);
 
   return buffer;
 }
 
 int main(int argc, char* argv[]) {
-  Stack stack;
+  Stack   stack;
+  Scanner scanner;
+
   stack_init(&stack);
 
   if (argc == 1) {
-    repl(&stack);
+    scanner_init(&scanner, NULL, MODE_REPL);
+    repl(&stack, &scanner);
   } else {
     if (argv[1] == NULL) {
       printf("No file provided\n");
@@ -87,12 +110,12 @@ int main(int argc, char* argv[]) {
 
     char* file_contents = readFile(argv[1]);
 
-    evaluate(file_contents, &stack);
+    scanner_init(&scanner, file_contents, MODE_FILE);
+
+    evaluate(&stack, &scanner);
 
     return 0;
   }
-
-  repl(&stack);
 
   stack_free(&stack);
 

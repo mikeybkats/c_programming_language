@@ -2,15 +2,34 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "calculator_types.h"
+#include "debug.h"
+#include "flag.h"
+#include "stack.h"
 
 #define MAX_NUMBER_LENGTH 32
+#define MAX_STRING_SIZE   1024
 
-void scanner_init(Scanner* scanner, const char* source) {
-  // stack allocated scanner
-  scanner->source   = source;
+void scanner_init(Scanner* scanner, const char* source, CalculatorMode mode) {
+  scanner->source = malloc(MAX_STRING_SIZE);
+
+  if (source != NULL) {
+    size_t len = strlen(source);
+
+    // stack allocated scanner
+    scanner->source = (char*)malloc(len + 1);
+
+    if (scanner->source != NULL) {
+      strcpy(scanner->source, source);
+    }
+  }
+
   scanner->position = 0;
   scanner->start    = 0;
-  scanner->mode     = MODE_REPL;
+  scanner->mode     = mode;
 }
 
 bool is_at_end(Scanner* scanner) {
@@ -20,12 +39,16 @@ bool is_at_end(Scanner* scanner) {
   char current = scanner->source[scanner->position];
 
   if (scanner->mode == MODE_REPL) {
-    // printf("REPL Mode -- current: %c\n", current == '\n' ? '\n' : current);
-    return current == '\n' || current == '\0';
+    if (current == '\n') {
+      advance(scanner);
+      return true;
+    }
+    // handle the null terminator for strings that don't end in new lines
+    if (current == '\0') {
+      return true;
+    }
   }
 
-  // TODO: currently scanner is created as REPL mode so this will never run. Add
-  // a file read mode.
   if (scanner->mode == MODE_FILE) {
     return current == '\0';
   }
@@ -63,6 +86,12 @@ char advance(Scanner* scanner) {
   return scanner->source[scanner->position - 1];
 }
 
+void consume(Scanner* scanner, int length) {
+  for (int i = 0; i < length; i++) {
+    advance(scanner);
+  }
+}
+
 void skip_whitespace(Scanner* scanner) {
   assert(scanner != NULL && scanner->source != NULL &&
          "scanner -- skip_whitespace -- Null pointer error.");
@@ -72,9 +101,10 @@ void skip_whitespace(Scanner* scanner) {
       case '\t':
       case '\r':
       case '\n':
-      case ' ':
+      case ' ': {
         advance(scanner);
         break;
+      }
 
       default:
         return;
@@ -120,37 +150,59 @@ TokenError scan_token(Scanner* scanner, Token* token) {
     return make_operator(advance(scanner), token);
   }
 
+  if (is_alpha(current)) {
+    return TOKEN_INVALID_ALPHA;
+  }
+
+  if (is_flag(current)) {
+    return TOKEN_FLAG_OK;
+  }
+
   return TOKEN_INVALID_UNDEFINED;
 }
 
-CalculatorError scan_line(Scanner* scanner, Stack* stack) {
+CalculatorResult* scan_line(Scanner* scanner, Stack* stack) {
+  CalculatorResult* result = malloc(sizeof(CalculatorResult));
+  CalculatorValue*  value  = malloc(sizeof(CalculatorValue));
+  Flags*            flags  = malloc(sizeof(Flags));
+
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
-
     Token token;
     token_init(&token);
 
     TokenError err_t = scan_token(scanner, &token);
+    StackError err_s = STACK_OK;
 
-    if (err_t != TOKEN_OK) {
-      return return_token_error(err_t);
+    if (err_t == TOKEN_OK) {
+      err_s = evaluate_token(&token, stack);
+
+      if (err_s != STACK_OK) {
+        result->as.error = return_stack_error(err_s);
+      }
     }
 
-    // Stack structure
-    // TODO: Future enhancement - refactor stack to handle both numbers and
-    // move evaluate function into seperate file
-    // and push tokens for operations into stack here instead of evaluating
-    // immediately
+    if (err_t == TOKEN_FLAG_OK) {
+      init_flags(flags);
 
-    // evaluate the token
-    StackError err_s = evaluate_token(&token, stack);
+      err_t = queue_flags(scanner, flags);
+    }
 
-    if (err_s != STACK_OK) {
-      return return_stack_error(err_s);
+    if (err_t != TOKEN_OK) {
+      result->as.error = return_token_error(err_t);
     }
   }
 
-  CalculatorError err;
-  err.type = ERROR_NONE;
-  return err;
+  if (result->type != RESULT_VALUE) {
+    result->type = RESULT_NONE;
+  }
+
+  result->type = RESULT_VALUE;
+  if (flags != NULL) {
+    value->flags = *flags;
+  }
+  stack_peek(stack, &value->value);
+  result->as.value = value;
+
+  return result;
 }

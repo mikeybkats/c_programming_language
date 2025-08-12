@@ -1,0 +1,29 @@
+CompileFlags:
+  Add: [-Wall, -Werror, -Wsign-compare]
+
+Diagnostics:
+  UnusedIncludes: Strict
+  ClangTidy:
+    Add: [
+        bugprone-*,
+        cert-*,
+        cppcoreguidelines-*,
+        performance-*,
+        portability-*,
+        # readability-*,
+      ]
+    Remove:
+      [
+        cppcoreguidelines-avoid-magic-numbers,
+        cppcoreguidelines-init-variables,
+        bugprone-easily-swappable-parameters,
+      ]
+
+Index:
+  Background: Build
+
+Completion:
+  AllScopes: true
+
+InlayHints:
+  Enabled: Yes

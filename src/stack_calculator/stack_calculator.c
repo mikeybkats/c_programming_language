@@ -2,13 +2,14 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-CalculatorError return_stack_error(StackError stack_error) {
-  CalculatorError error;
-  error.type              = ERROR_STACK;
-  error.error.stack_error = stack_error;
+#include "calculator_types.h"
+#include "stack.h"
+
+CalculatorError* return_stack_error(StackError stack_error) {
+  CalculatorError* error   = malloc(sizeof(CalculatorError));
+  error->type              = ERROR_STACK;
+  error->error.stack_error = stack_error;
 
   return error;
 }
@@ -137,4 +138,48 @@ StackError calc_power(Stack* stack) {
       "calc_power -- Stack memory error. Processing r2 base from stack_pop.");
 
   return stack_push(stack, pow(base, exponent));
+}
+
+int leftmost_bit(unsigned x) {
+  x |= x >> 16;
+  x |= x >> 8;
+  x |= x >> 4;
+  x |= x >> 2;
+  x |= x >> 1;
+
+  return (int)(x & (~x >> 1));
+}
+
+StackError calc_msb(Stack* stack) {
+  if (stack->top < 2) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     base;
+  StackError r1;
+
+  r1 = stack_pop(stack, &base);
+  assert(
+      r1 == STACK_OK &&
+      "calc_msb -- Stack memory error. Processing r1 most significant bit from "
+      "stack_pop.");
+
+  return stack_push(stack, leftmost_bit((int)base));
+}
+
+StackError calc_and(Stack* stack) {
+  if (stack->top < 2) {
+    return STACK_UNDERFLOW;
+  }
+
+  double     n1, n2;
+  StackError r1, r2;
+
+  r2 = stack_pop(stack, &n2);
+  r1 = stack_pop(stack, &n1);
+
+  assert(r2 == STACK_OK && "calc_and -- Stack Memory Error");
+  assert(r1 == STACK_OK && "calc_and -- Stack Memory Error");
+
+  return stack_push(stack, (int)n2 & (int)n1);
 }

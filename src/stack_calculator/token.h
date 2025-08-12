@@ -2,19 +2,27 @@
 #define TOKEN_H
 
 #include <stdbool.h>
-
 #include "stack.h"
+#include "calculator_types.h"
 
 typedef enum
 {
-  TOKEN_PLUS,      // +
-  TOKEN_MINUS,     // -
-  TOKEN_MULTIPLY,  // *
-  TOKEN_DIVIDE,    // /
-  TOKEN_POWER,     // ^
-  TOKEN_SQRT,      // s
-  TOKEN_NUMBER,    // 123, 45.67
-  TOKEN_EOF,       // end of input
+  TOKEN_PLUS,         // +
+  TOKEN_MINUS,        // -
+  TOKEN_MULTIPLY,     // *
+  TOKEN_DIVIDE,       // /
+  TOKEN_POWER,        // ^
+  TOKEN_SQRT,         // sqrt
+  TOKEN_NUMBER,       // 123, 45.67
+  TOKEN_AND,          // & - bitwise and
+  TOKEN_OR,           // | - bitwise or
+  TOKEN_XOR,          // x| - bitwise exlusive or
+  TOKEN_NOT,          // ! - bitwise not
+  TOKEN_LEFT_SHIFT,   // << - bitwise left shift
+  TOKEN_RIGHT_SHIFT,  // >> - bitwise right shift
+  TOKEN_MSB,          // msb - most significant bit
+  TOKEN_EOF,          // end of input
+  TOKEN_FLAG,         // : - begins with colon
   TOKEN_UNDEFINED
 } TokenType;
 
@@ -30,12 +38,13 @@ typedef struct
   double    value;  // used for TOKEN_NUMBER
 } Token;
 
-CalculatorError return_token_error(TokenError error);
+CalculatorError* return_token_error(TokenError error);
 
 TokenError token_init(Token* token);
 
 // Helper functions
 bool is_digit(char c);
+bool is_alpha(char c);
 bool is_operator(char c);
 
 // Create tokens

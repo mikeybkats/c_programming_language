@@ -8,10 +8,10 @@
 #include "calculator_types.h"
 #include "stack_calculator.h"
 
-CalculatorError return_token_error(TokenError token_error) {
-  CalculatorError error;
-  error.type              = ERROR_TOKEN;
-  error.error.token_error = token_error;
+CalculatorError* return_token_error(TokenError token_error) {
+  CalculatorError* error   = malloc(sizeof(CalculatorError));
+  error->type              = ERROR_TOKEN;
+  error->error.token_error = token_error;
 
   return error;
 }
@@ -25,6 +25,10 @@ TokenError token_init(Token* token) {
 
 bool is_digit(char c) {
   return c >= '0' && c <= '9';
+}
+
+bool is_alpha(char c) {
+  return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
 bool is_operator(char c) {
@@ -75,6 +79,8 @@ TokenError make_operator(char op, Token* token) {
     case 's':
       token->type = TOKEN_SQRT;
       break;
+    default:
+      printf("no operator available\n");
   }
 
   return TOKEN_OK;
@@ -90,7 +96,7 @@ TokenError make_eof(Token* token) {
 }
 
 // TODO: Future enhancement - refactor stack to handle both numbers and
-// operators evaluate_token should be re-moved from here and into a seperate
+// operators. evaluate_token should be re-moved from here and into a seperate
 // file for calcuator evaluation
 StackError evaluate_token(Token* token, Stack* stack) {
   switch (token->type) {

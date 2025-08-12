@@ -5,20 +5,21 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "calculator_types.h"
 #include "stack.h"
 #include "stack_calculator.h"
 #include "token.h"
 
 typedef struct
 {
-  const char*    source;
+  char*          source;
   size_t         position;  // current position in source
   size_t         start;     // start of current token
   CalculatorMode mode;
 } Scanner;
 
 // Initialize a scanner with source text
-void scanner_init(Scanner* scanner, const char* source);
+void scanner_init(Scanner* scanner, const char* source, CalculatorMode mode);
 
 // Check if we've reached the end of input
 bool is_at_end(Scanner* scanner);
@@ -32,6 +33,8 @@ char peek_next(Scanner* scanner);
 // Consume the current character. Increment the scanner. Return the char of the
 // char just moved past
 char advance(Scanner* scanner);
+
+void consume(Scanner* scanner, int length);
 
 // Skip any whitespace characters
 void skip_whitespace(Scanner* scanner);
@@ -48,6 +51,8 @@ bool match(Scanner* scanner, char expected);
 // If it's end of input: create EOF token
 TokenError scan_token(Scanner* scanner, Token* token);
 
-CalculatorError scan_line(Scanner* scanner, Stack* stack);
+CalculatorResult* scan_line(Scanner* scanner, Stack* stack);
+
+TokenError scan_flag(Scanner* scannner, char* flag);
 
 #endif  // SCANNER_H

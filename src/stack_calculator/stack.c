@@ -1,7 +1,6 @@
 #include "stack.h"
 
 #include <assert.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -91,21 +90,4 @@ bool stack_is_empty(const Stack* stack) {
   assert(stack != NULL && "Stack pointer cannot be NULL in stack_is_empty");
 
   return stack->top == 0;
-}
-
-void print_stack(const Stack* stack) {
-  if (stack->top > INT_MAX) {
-    // Handle error case
-    printf("Stack too large for int conversion\n");
-    return;
-  }
-
-  printf("------\n");
-  printf("Stack:\n");
-  printf("------\n");
-
-  for (int i = 0; i < (int)stack->top; i++) {
-    printf("Index: %d, Value: %f\n", i, stack->values[i]);
-  }
-  printf("\n");
 }

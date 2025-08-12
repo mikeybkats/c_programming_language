@@ -12,7 +12,7 @@
 
 #define INT_MAX 2147483647
 
-CalculatorError return_stack_error(StackError stack_error);
+CalculatorError* return_stack_error(StackError stack_error);
 
 // Calculator operations
 StackError calc_add(Stack* stack);
