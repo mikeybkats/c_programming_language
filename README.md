@@ -3,7 +3,7 @@
 ## Motivations
 
 I learned C a long time ago when I first got started programming. After learning more about
-compilers I decided to revisit the language and what an impact it's had on me. There is so many
+compilers I decided to revisit the language and what an impact it's had on me. There are so many
 wonderful intricacies to enjoy in this amazing lower level language.
 
 ## Topics
