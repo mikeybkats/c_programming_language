@@ -1,7 +1,8 @@
 
 #include <stdio.h>
 
-#include "stack.h"
+#include "calculator_types.h"
+#include "flag.h"
 
 void print_bits(double num) {
   for (int i = 31; i >= 0; i--) {
@@ -26,10 +27,15 @@ void print_hexadecimal(double num) {
   printf("%#.2x\n", (int)num);
 }
 
-void print_result(Stack* stack) {
-  double result;
+void print_result(CalculatorResult* result) {
+  if (result->type != RESULT_VALUE) {
+    return;
+  }
 
-  stack_peek(stack, &result);
+  if (result->as.value->flags.length == 0) {
+    print_decimal(result->as.value->value);
+    return;
+  }
 
-  print_decimal(result);
+  process_flags(result->as.value->value, result->as.value->flags);
 }

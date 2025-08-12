@@ -45,16 +45,16 @@ char* get_token_error_message(TokenError error) {
   }
 }
 
-void handle_error(CalculatorError error, char current) {
+void handle_error(CalculatorError* error, char current) {
   char message[100];  // Increased buffer size to handle longer error messages
   message[0] = '\0';  // Initialize the string properly
 
-  if (error.type == ERROR_STACK) {
+  if (error->type == ERROR_STACK) {
     strcat(message, "Stack error: ");
     const char* stack_error_message =
-        get_stack_error_message(error.error.stack_error);
+        get_stack_error_message(error->error.stack_error);
     strcat(message, stack_error_message);
-  } else if (error.type == ERROR_TOKEN) {
+  } else if (error->type == ERROR_TOKEN) {
     strcat(message, "Token error -- at char: ");
 
     // Handle non-printable characters safely
@@ -70,9 +70,11 @@ void handle_error(CalculatorError error, char current) {
     }
 
     const char* token_error_message =
-        get_token_error_message(error.error.token_error);
+        get_token_error_message(error->error.token_error);
     strcat(message, token_error_message);
-  } else if (error.type == ERROR_NONE) {
+  } else if (error->type == ERROR_FLAG) {
+    strcat(message, "Flag Error");
+  } else if (error->type == ERROR_NONE) {
     strcat(message, "No error");
   } else {
     strcat(message, "Unknown error type");

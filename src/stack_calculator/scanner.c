@@ -8,6 +8,7 @@
 #include "calculator_types.h"
 #include "debug.h"
 #include "flag.h"
+#include "stack.h"
 
 #define MAX_NUMBER_LENGTH 32
 #define MAX_STRING_SIZE   1024
@@ -160,42 +161,48 @@ TokenError scan_token(Scanner* scanner, Token* token) {
   return TOKEN_INVALID_UNDEFINED;
 }
 
-CalculatorError scan_line(Scanner* scanner, Stack* stack) {
-  CalculatorError err;
+CalculatorResult* scan_line(Scanner* scanner, Stack* stack) {
+  CalculatorResult* result = malloc(sizeof(CalculatorResult));
+  CalculatorValue*  value  = malloc(sizeof(CalculatorValue));
+  Flags*            flags  = malloc(sizeof(Flags));
+
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
     Token token;
     token_init(&token);
 
     TokenError err_t = scan_token(scanner, &token);
-    StackError err_s;
+    StackError err_s = STACK_OK;
 
-    if (err_t == TOKEN_FLAG_OK) {
-      // proces flags must happen after evaluation
-      Flags* flags = malloc(sizeof(Flags));
-      init_flags(flags);
-
-      queue_flags(scanner, flags);
-
-      err_s = process_flags(flags, stack);
-      if (err_s == STACK_OK) {
-        err.type = ERROR_NONE;
-        return err;
-      }
-
-    } else {
-      if (err_t != TOKEN_OK) {
-        return return_token_error(err_t);
-      }
-      // evaluate the token
+    if (err_t == TOKEN_OK) {
       err_s = evaluate_token(&token, stack);
+
+      if (err_s != STACK_OK) {
+        result->as.error = return_stack_error(err_s);
+      }
     }
 
-    if (err_s != STACK_OK) {
-      return return_stack_error(err_s);
+    if (err_t == TOKEN_FLAG_OK) {
+      init_flags(flags);
+
+      err_t = queue_flags(scanner, flags);
+    }
+
+    if (err_t != TOKEN_OK) {
+      result->as.error = return_token_error(err_t);
     }
   }
 
-  err.type = ERROR_NONE;
-  return err;
+  if (result->type != RESULT_VALUE) {
+    result->type = RESULT_NONE;
+  }
+
+  result->type = RESULT_VALUE;
+  if (flags != NULL) {
+    value->flags = *flags;
+  }
+  stack_peek(stack, &value->value);
+  result->as.value = value;
+
+  return result;
 }

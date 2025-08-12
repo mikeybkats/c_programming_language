@@ -6,10 +6,10 @@
 #include "calculator_types.h"
 #include "stack.h"
 
-CalculatorError return_stack_error(StackError stack_error) {
-  CalculatorError error;
-  error.type              = ERROR_STACK;
-  error.error.stack_error = stack_error;
+CalculatorError* return_stack_error(StackError stack_error) {
+  CalculatorError* error   = malloc(sizeof(CalculatorError));
+  error->type              = ERROR_STACK;
+  error->error.stack_error = stack_error;
 
   return error;
 }

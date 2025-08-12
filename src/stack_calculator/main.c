@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "calculator_types.h"
 #include "debug.h"
 #include "error.h"
 #include "print.h"
@@ -8,14 +9,17 @@
 #include "stack.h"
 
 void evaluate(Stack* stack, Scanner* scanner) {
-  CalculatorError calc_error = scan_line(scanner, stack);
+  CalculatorResult* calc_result = scan_line(scanner, stack);
 
-  if (calc_error.type != ERROR_NONE) {
-    handle_error(calc_error, scanner->source[scanner->position]);
-
+  if (calc_result->type != RESULT_VALUE) {
+    if (calc_result->type == RESULT_NONE) {
+    } else {
+      handle_error(calc_result->as.error, scanner->source[scanner->position]);
+    }
     print_stack(stack);
+
   } else {
-    print_result(stack);
+    print_result(calc_result);
   }
 }
 

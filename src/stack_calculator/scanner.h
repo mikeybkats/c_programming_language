@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "calculator_types.h"
 #include "stack.h"
 #include "stack_calculator.h"
 #include "token.h"
@@ -50,7 +51,7 @@ bool match(Scanner* scanner, char expected);
 // If it's end of input: create EOF token
 TokenError scan_token(Scanner* scanner, Token* token);
 
-CalculatorError scan_line(Scanner* scanner, Stack* stack);
+CalculatorResult* scan_line(Scanner* scanner, Stack* stack);
 
 TokenError scan_flag(Scanner* scannner, char* flag);
 

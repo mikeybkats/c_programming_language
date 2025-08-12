@@ -8,10 +8,10 @@
 #include "calculator_types.h"
 #include "stack_calculator.h"
 
-CalculatorError return_token_error(TokenError token_error) {
-  CalculatorError error;
-  error.type              = ERROR_TOKEN;
-  error.error.token_error = token_error;
+CalculatorError* return_token_error(TokenError token_error) {
+  CalculatorError* error   = malloc(sizeof(CalculatorError));
+  error->type              = ERROR_TOKEN;
+  error->error.token_error = token_error;
 
   return error;
 }
