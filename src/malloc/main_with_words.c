@@ -19,30 +19,43 @@ static Header *freep = NULL; /* the start of the free list */
 
 /* free - put block ap in free list.
 
+- adjusts the size of the block in the header
 - maintains circular relationship between base and current pointer
 */
 void free(void *ap) {
   Header *block_p, *cur_p;
 
-  block_p = (Header *)ap - 1; /* point to block header */
+  block_p = (Header *)ap - 1; /* point to the block pointer header */
 
   // check to see if the target block falls between the beginning and end of the
-  // free list loop through the free list until the break pointer header
-  // (block_p) is not:
-  // 1. greater than the freep
-  // 2. less than the next Header pointer
+  // free list loop through the free list until
+  // (block_p) is not between the cur_p and the next cur_p:
+  /*
+  |99    |100                   |200      |300      |400       |500      |600  |
+  |..    |free_p                |         |         |          |         |..   |
+  |..    |block_p (being freed) |         |         |          |         |..   |
+  |..    |block_p->s.size (400) |         |         |          |         |..   |
+  |..    |(next) ptr->200       |ptr->300 |ptr->400 |ptr->500  |ptr->100 |..   |
+  */
   for (cur_p = freep; !(block_p > cur_p && block_p < cur_p->s.ptr);
        cur_p = cur_p->s.ptr) {
+    // if the current node address is greater or equal to the next node address
+    // and the block header pointer is greater
     if (cur_p >= cur_p->s.ptr && (block_p > cur_p || block_p < cur_p->s.ptr)) {
       break; /* freed block at start or end of arena*/
     }
   }
 
+  // if the current pointer equals the header size + the header it means that
+  // the current block is adjacent to the next block in the free list
   if (block_p + block_p->s.size == cur_p->s.ptr) { /* join upper nbr */
-    block_p->s.size += cur_p->s.ptr->s.size;
-    block_p->s.ptr = cur_p->s.ptr->s.ptr;
+    block_p->s.size += cur_p->s.ptr->s.size;  // increase the size of the block
+    block_p->s.ptr =
+        cur_p->s.ptr->s.ptr;  // set the first pointer after the header to the
+                              // one after next pointer
   } else {
-    block_p->s.ptr = cur_p->s.ptr;
+    block_p->s.ptr =
+        cur_p->s.ptr;  // set the first free block to the next free block
   }
 
   if (cur_p + cur_p->s.size == block_p) {
@@ -51,6 +64,7 @@ void free(void *ap) {
   } else {
     cur_p->s.ptr = block_p;
   }
+
   freep = cur_p;
 }
 
@@ -64,8 +78,10 @@ static Header *morecore(unsigned n_units) {
   if (n_units < NALLOC) {
     n_units = NALLOC;
   }
-  core_p = sbrk((int)(n_units * sizeof(Header)));
-  if (core_p == (char *)-1) { /* no space at all*/
+  core_p = sbrk(
+      (int)(n_units * sizeof(Header)));  // sbrk returns a chunk of memory that
+                                         // is guarenteed to be sequential
+  if (core_p == (char *)-1) {            /* no space at all*/
     /* sbrk returns (void*)-1 on failure */
     return NULL;
   }
@@ -79,7 +95,6 @@ static Header *morecore(unsigned n_units) {
 /* malloc: general purpose storage allocator */
 void *i_malloc(unsigned n_bytes) {
   Header  *cur_p, *prev_p;
-  Header  *morecore(unsigned);  // function prototype declaration
   unsigned n_units;
 
   n_units =
@@ -115,6 +130,7 @@ void *i_malloc(unsigned n_bytes) {
     }
     if (cur_p == freep) {         /* wrapped around free list*/
       cur_p = morecore(n_units);  // get units from OS. First pass of i_malloc
+                                  // returns the list.
       if (cur_p == NULL) {
         return NULL; /* none left*/
       }
