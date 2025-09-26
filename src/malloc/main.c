@@ -23,11 +23,6 @@ void free(void *ap) {
 
   bp = (Header *)ap - 1; /* poin to block header */
 
-  // check to see if the target block falls between the beginning and end of the
-  // free list loop through the free list until the break pointer header (bp) is
-  // not:
-  // 1. greater than the freep
-  // 2. less than the next Header pointer
   for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr) {
     if (p >= p->s.ptr && (bp > p || bp < p->s.ptr)) {
       break; /* freed block at start or end of arena*/
