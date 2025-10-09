@@ -18,6 +18,7 @@ static Header base; /* empty list to get started. OS allocates memory at a fixed
 static Header *freep = NULL; /* the start of the free list */
 
 /* free - put block ap in free list.
+- sets the value of the global free pointer
 - adjusts the size of the block in the header
 - maintains circular relationship between base and current pointer
 - loops through the free list until it finds
@@ -57,8 +58,7 @@ void free(void *ap) {
 
   */
 
-  // traverse the list until the current node is the last node in the lis
-  // and
+  // traverse the list until the current node is the last node in the list
   for (cur_p = freep; !(block_p > cur_p && block_p < cur_p->s.next);
        cur_p = cur_p->s.next) {
     // is the next block pointing back to the start of the circlular list?
@@ -91,6 +91,8 @@ void free(void *ap) {
   |..    |          |cur_p        |block_p       |          |         |
   |..    |          |             |size (100)    |          |         |
   |..    |next->200  |next->400     |next->500      |next->600  |next->100 |
+
+  coalescing free blocks - merge adjacent free blocks into those being freed
 
   is the block being freed adjacent to the next block?
   */
@@ -162,28 +164,36 @@ void *i_malloc(unsigned n_bytes) {
   // prev_p starts freep which points to &base initially
   // cur_p is initialized as &base
   for (cur_p = prev_p->s.next;; prev_p = cur_p, cur_p = cur_p->s.next) {
-    if (cur_p->s.size >= n_units) {   /* big enough */
-      if (cur_p->s.size == n_units) { /* exact fit */
-        prev_p->s.next = cur_p->s.next;
-      } else {                     /* allocate tail end when block is too big */
-        cur_p->s.size -= n_units;  // subtract the needed blocks from next
-        cur_p +=
-            cur_p->s.size;  // pointer arithmetic: increment location of Header
-                            // to the start of the difference of the available
-                            // block and the required size |1|2|3|4|5|6|7|8|
-                            // |_|_|_|_|_|_|_|_|  cur_p->s.size // 8
-                            // |x|x|              n_units // 2
-                            // |_|_|_|_|_|_|      cur_p->s.size -= n_units
-                            // |_|_|_|_|_|_|x|x|  cur_p += cur_p->s.size
-        cur_p->s.size =
-            n_units;  // after moving the pointer set the size of next
+    if (cur_p->s.size >= n_units) {      // big enough
+      if (cur_p->s.size == n_units) {    // exact fit
+        prev_p->s.next = cur_p->s.next;  // setting the prev next to the current
+                                         // next removes the node from the list
+      } else {                           // block is too big
+        // allocate tail end of block
+        cur_p->s.size -= n_units;  // reduce the block size
+        cur_p += cur_p->s.size;    // move the pointer to the end of the block
+        cur_p->s.size = n_units;   // set the size of the allocated portion
+
+        // pointer arithmetic: increment location of
+        // Header to the start of the difference of the
+        // available block and the required size
+        // cur_p = 0x100
+        // |101|102|103|104|105|106|107|108|
+        // |___|___|___|___|___|___|___|___|
+        // cur_p->s.size = 101:108 = 8
+        // n_units = 2
+        // cur_p->s.size -= n_units = 6
+        // cur_p += cur_p->s.size // gives the end of the block
+        // cur_p.size = 2
       }
       freep = prev_p;  // set global free pointer to previous pointer
       return (void *)(cur_p + 1);
     }
-    if (cur_p == freep) {         /* wrapped around free list*/
-      cur_p = morecore(n_units);  // get units from OS. First pass of
-                                  // i_malloc returns the list.
+
+    // freep has not been redefined (wrapped around free list)
+    if (cur_p == freep) {
+      // get units from OS. First pass of i_malloc returns the list.
+      cur_p = morecore(n_units);
       if (cur_p == NULL) {
         return NULL; /* none left*/
       }
