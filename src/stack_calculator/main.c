@@ -10,6 +10,10 @@
 
 void evaluate(Stack* stack, Scanner* scanner) {
   CalculatorResult* calc_result = scan_line(scanner, stack);
+  if (calc_result == NULL) {
+    fprintf(stderr, "Out of memory.\n");
+    return;
+  }
 
   if (calc_result->type != RESULT_VALUE) {
     if (calc_result->type == RESULT_NONE) {
@@ -36,7 +40,13 @@ static void repl(Stack* stack, Scanner* scanner) {
       break;
     }
 
-    strcat(scanner->source, line);
+    size_t cur = strlen(scanner->source);
+    size_t add = strlen(line);
+    if (cur + add >= SCANNER_SOURCE_CAPACITY) {
+      fprintf(stderr, "Input exceeds buffer; reset or shorten lines.\n");
+      continue;
+    }
+    memcpy(scanner->source + cur, line, add + 1);
 
     evaluate(stack, scanner);
   }
@@ -104,6 +114,7 @@ int main(int argc, char* argv[]) {
   if (argc == 1) {
     scanner_init(&scanner, NULL, MODE_REPL);
     repl(&stack, &scanner);
+    free(scanner.source);
   } else {
     if (argv[1] == NULL) {
       printf("No file provided\n");
@@ -113,9 +124,12 @@ int main(int argc, char* argv[]) {
     char* file_contents = readFile(argv[1]);
 
     scanner_init(&scanner, file_contents, MODE_FILE);
+    free(file_contents);
 
     evaluate(&stack, &scanner);
 
+    free(scanner.source);
+    stack_free(&stack);
     return 0;
   }
 

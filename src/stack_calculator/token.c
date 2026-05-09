@@ -80,7 +80,7 @@ TokenError make_operator(char op, Token* token) {
       token->type = TOKEN_SQRT;
       break;
     default:
-      printf("no operator available\n");
+      return TOKEN_INVALID_OPERATOR;
   }
 
   return TOKEN_OK;

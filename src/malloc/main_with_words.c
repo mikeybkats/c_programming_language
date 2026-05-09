@@ -75,28 +75,24 @@ void free(void *ap) {
 
   /*
   scenario 1: block being freed is between two existing blocks:
-  |99    |100       |200          |300      |400       |
-  |..    |free_p    |block_p      |cur_p    |          |
-  |..    |          |size=100     |         |          |
+  |99    |100        |200           |300       |400        |
+  |..    |free_p     |block_p       |cur_p     |           |
+  |..    |           |size=100      |          |           |
   |..    |next->300  |next->400     |next->100 |next->200  |
 
-  scenario 2: block being freed is not adjacent to any existing block:
-  |99    |100       |200          |300           |400       |500      |
-  |..    |          |cur_p        |block_p       |          |         |
-  |..    |          |             |size (100)    |          |         |
-  |..    |next->200  |next->600     |next->500      |          |next->200 |
-
   scenario 3: block being freed is adjacent to next block:
-  |99    |100       |200          |300           |400       |500      |
-  |..    |          |cur_p        |block_p       |          |         |
-  |..    |          |             |size (100)    |          |         |
-  |..    |next->200  |next->400     |next->500      |next->600  |next->100 |
+  |99    |100       |200          |300           |400       |500       |
+  |..    |          |cur_p        |block_p       |          |          |
+  |..    |          |             |size (100)    |          |          |
+  |..    |next->200 |next->400    |next->500     |next->600 |next->100 |
 
   coalescing free blocks - merge adjacent free blocks into those being freed
 
   is the block being freed adjacent to the next block?
   */
+  /* is the block being freed adjacent to the start of the list */
   if (block_p + block_p->s.size == cur_p->s.next) { /* join upper nbr */
+    // merge the starting node and block to free
     block_p->s.size +=
         cur_p->s.next->s.size;  // increase the size of the block so that it
                                 // overlaps the adjacent block
@@ -105,15 +101,27 @@ void free(void *ap) {
                                 // to the one after current next pointer
   } else {
     // the blocks are not adjacent
+    /*
+      scenario 2: block being freed is not adjacent to any existing block:
+
+      |99    |100        |200           |300            |400       |500       |
+      |..    |           |cur_p         |block_p        |          |          |
+      |..    |           |              |size (100)     |          |          |
+      |..    |next->200  |next->600     |next->500      |          |next->200 |
+    */
+
+    // assign the node that the freed node points to next
     block_p->s.next =
         cur_p->s.next;  // set the free block to the next free block
   }
 
   /* is the current block adjacent to the block being freed? */
+  /* is the block being freed adjacent to the end of the list?  */
   if (cur_p + cur_p->s.size == block_p) {
     cur_p->s.size += block_p->s.size;
     cur_p->s.next = block_p->s.next;
   } else {
+    // assign the pointer to the next node
     cur_p->s.next = block_p;
   }
 

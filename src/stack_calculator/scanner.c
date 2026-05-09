@@ -11,19 +11,18 @@
 #include "stack.h"
 
 #define MAX_NUMBER_LENGTH 32
-#define MAX_STRING_SIZE   1024
 
 void scanner_init(Scanner* scanner, const char* source, CalculatorMode mode) {
-  scanner->source = malloc(MAX_STRING_SIZE);
-
   if (source != NULL) {
     size_t len = strlen(source);
-
-    // stack allocated scanner
     scanner->source = (char*)malloc(len + 1);
-
     if (scanner->source != NULL) {
-      strcpy(scanner->source, source);
+      memcpy(scanner->source, source, len + 1);
+    }
+  } else {
+    scanner->source = (char*)malloc(SCANNER_SOURCE_CAPACITY);
+    if (scanner->source != NULL) {
+      scanner->source[0] = '\0';
     }
   }
 
@@ -177,43 +176,65 @@ void free_calculator_result(CalculatorResult* result) {
 CalculatorResult* scan_line(Scanner* scanner, Stack* stack) {
   CalculatorResult* result = malloc(sizeof(CalculatorResult));
   CalculatorValue*  value  = malloc(sizeof(CalculatorValue));
-  Flags             flags[MAX_FLAGS];
+  if (result == NULL || value == NULL) {
+    free(value);
+    free(result);
+    return NULL;
+  }
+
+  Flags flags;
+  init_flags(&flags);
+
+  result->type = RESULT_NONE;
 
   while (!is_at_end(scanner)) {
     skip_whitespace(scanner);
+    if (is_at_end(scanner)) {
+      break;
+    }
     Token token;
     token_init(&token);
 
     TokenError err_t = scan_token(scanner, &token);
-    StackError err_s = STACK_OK;
 
     if (err_t == TOKEN_OK) {
-      err_s = evaluate_token(&token, stack);
-
+      StackError err_s = evaluate_token(&token, stack);
       if (err_s != STACK_OK) {
-        result->as.error = return_stack_error(err_s);
+        result->type        = RESULT_ERROR;
+        result->as.error    = return_stack_error(err_s);
+        free(value);
+        return result;
       }
+      continue;
     }
 
     if (err_t == TOKEN_FLAG_OK) {
-      init_flags(flags);
-
-      err_t = queue_flags(scanner, flags);
+      init_flags(&flags);
+      err_t = queue_flags(scanner, &flags);
+      if (err_t != TOKEN_OK) {
+        result->type     = RESULT_ERROR;
+        result->as.error = return_token_error(err_t);
+        free(value);
+        return result;
+      }
+      continue;
     }
 
-    if (err_t != TOKEN_OK) {
-      result->as.error = return_token_error(err_t);
-    }
+    result->type     = RESULT_ERROR;
+    result->as.error = return_token_error(err_t);
+    free(value);
+    return result;
   }
 
-  if (result->type != RESULT_VALUE) {
+  StackError peek_err = stack_peek(stack, &value->value);
+  if (peek_err != STACK_OK) {
     result->type = RESULT_NONE;
+    free(value);
+    return result;
   }
 
-  result->type = RESULT_VALUE;
-  value->flags = *flags;
-  stack_peek(stack, &value->value);
-  result->as.value = value;
-
+  result->type       = RESULT_VALUE;
+  value->flags       = flags;
+  result->as.value   = value;
   return result;
 }

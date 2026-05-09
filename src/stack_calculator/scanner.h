@@ -2,6 +2,10 @@
 #define SCANNER_H
 
 #include <stdbool.h>
+
+/** REPL accumulates input into scanner->source; must not exceed this size. */
+#define SCANNER_SOURCE_CAPACITY 1024
+
 #include <stddef.h>
 #include <stdlib.h>
 

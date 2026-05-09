@@ -3,8 +3,7 @@
 
 #include <stdlib.h>
 
-#define MAX_FLAGS 16 
-#define INT_MAX 2147483647
+#define MAX_FLAGS 16
 
 typedef enum
 {
