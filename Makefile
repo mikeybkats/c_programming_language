@@ -20,7 +20,7 @@ calculator: $(CALC_TARGET)
 singles: $(SINGLE_EXES)
 
 $(CALC_TARGET): $(CALC_OBJS)
-	$(CC) $(CFLAGS) $(CALC_OBJS) -o $@
+	$(CC) $(CFLAGS) $(CALC_OBJS) -o $@ -lm
 
 # Fix: Update the object file path pattern
 $(BUILD_DIR)/stack_calculator/%.o: $(CALC_SRC_DIR)/%.c
